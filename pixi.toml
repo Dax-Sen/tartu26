@@ -1,0 +1,14 @@
+[workspace]
+name = "tartu26"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+
+[dependencies]
+python = ">=3.10"
+jupyterlab = ">=4.0.0"
+duckdb = ">=0.10.0"
+pandas = ">=2.0.0"
+pyarrow = ">=14.0.0"
+ipykernel = ">=6.0.0"
+plotly = ">=5.0.0"
+jupyter-cache = ">=0.6.0"

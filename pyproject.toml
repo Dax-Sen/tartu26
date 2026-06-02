@@ -1,0 +1,13 @@
+[project]
+name = "tartu26"
+version = "0.1.0"
+description = "Mobile Tartu 2026 Transport Data Science Workshop Python Environment"
+requires-python = ">=3.10"
+dependencies = [
+    "duckdb>=0.10.0",
+    "pandas>=2.0.0",
+    "pyarrow>=14.0.0",
+    "ipykernel>=6.0.0",
+    "plotly>=5.0.0",
+    "jupyter-cache>=0.6.0"
+]

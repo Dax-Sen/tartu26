@@ -128,7 +128,7 @@ One that is well-suited for data science is Posit Cloud, but unfortunately
 For these cloud services, you may still need to install the required packages the first time you launch a new session (see @sec-packages).
 </details>
 
-### Position Cloud {#sec-posit}
+### Posit Cloud {#sec-posit}
 
 <details>
 
@@ -140,28 +140,41 @@ TBC but go to [posit.cloud](https://posit.cloud) and create an account, then cre
 
 ## Local Setup {#sec-local}
 
-If you prefer to run the workshop materials on your own computer, you can follow the manual setup by installing the software listed in @sec-software and the R packages described in @sec-packages, or use the Docker and Dev Containers setup described in @sec-local-docker.
+If you prefer to run the workshop materials on your own computer, we recommend a machine with a **minimum of 16 GB RAM** due to the size of the datasets we will be processing.
+
+The workshop materials support both **R** and **Python** development paths. You can choose the setup method that best fits your preference:
 
 <details>
+<summary><b>Option A: Local devcontainer (recommended if you have admin rights to install Docker)</b></summary>
 
-The workshop materials support both **R** and **Python** development paths.
-You are free to follow either path depending on your preference.
+### Docker and Dev Containers {#sec-local-docker}
 
-### Software Requirements {#sec-software}
+This is the most reliable way to ensure a consistent environment. The repository includes a pre-configured `.devcontainer` that sets up all dependencies (R, Python, Quarto, VS Code extensions) inside an isolated container.
 
-Please ensure you have the following software installed on your machine:
+To use this option:
 
--   **Language Runtimes**:
-    -   **R (\>= 4.3)**: Required for the R path.
-    -   **Python (\>= 3.10)**: Required for the Python path.
--   **Popular IDE Options**:
-    -   **VS Code**: A versatile, modern, and powerful code editor.
-    -   **Posit** (such as Positron): A next-generation IDE built by Posit, tailored for multi-language data science.
-    -   **RStudio**: The classic, widely-used IDE for R development.
+1.  Ensure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [VS Code](https://code.visualstudio.com/) installed on your machine.
+2.  Install the **Dev Containers** extension in VS Code.
+3.  Clone the repository and open the folder in VS Code.
+4.  Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) to open the Command Palette, and select **Dev Containers: Reopen in Container**.
+
+</details>
+
+<details>
+<summary><b>Option B: Local R/RStudio installation</b></summary>
+
+### R/RStudio installation
+
+If you prefer a native R setup on your machine, please ensure you have the required runtimes, IDE, and tools installed.
+
+#### Software Requirements {#sec-software}
+
+-   **R (\>= 4.3)**: The language runtime.
+-   **RStudio** or **Positron**: The IDE.
 -   **Quarto CLI**: Used to compile and render the workshop documents and workbook.
 -   **Git**: Version control software to manage code and download files.
 
-### R Packages {#sec-packages}
+#### R Packages {#sec-packages}
 
 Install the necessary packages for the workshop using the `pak` package (recommended):
 
@@ -170,13 +183,12 @@ install.packages("pak")
 pak::pak("tdscience/tartu26")
 ```
 
-Alternatively, you can install them manually.
+Alternatively, you can install them manually using:
 
 <details>
-
 <summary>Manual installation instructions</summary>
 
-If you don't have {pak} installed, you can use `install.packages()` to install the required packages.
+If you don't have `{pak}` installed, you can use `install.packages()` to install the required packages.
 Running the following code is equivalent to using `pak` to install the dependencies:
 
 ``` r
@@ -191,17 +203,36 @@ install.packages(c(
   "htmlwidgets"
 ))
 ```
+</details>
 
-### Docker and Dev Containers {#sec-local-docker}
+</details>
 
-As an alternative to installing all software manually on your computer, you can run the workshop environment locally using Docker and VS Code Dev Containers. The repository includes a pre-configured development container setup (`.devcontainer`) containing all necessary runtime tools and packages pre-installed.
+<details>
+<summary><b>Option C: Local Python/VS Code installation</b></summary>
 
-To use this option:
+### Python/VS Code installation {#sec-local-python}
 
-1.  Ensure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [VS Code](https://code.visualstudio.com/) installed on your machine.
-2.  Install the **Dev Containers** extension in VS Code.
-3.  Clone the repository and open the folder in VS Code.
-4.  Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) to open the Command Palette, and select **Dev Containers: Reopen in Container**.
+If you prefer a native Python setup on your machine, we use a modern, fast conda/mamba alternative package manager called **Pixi** to quickly install and manage all dependencies.
+
+#### Software Requirements {#sec-software-py}
+
+-   **Python (\>= 3.10)**: The language runtime.
+-   **VS Code** or **Positron**: The IDE.
+-   **Quarto CLI**: Used to compile and render the workshop documents and workbook.
+-   **Git**: Version control software to manage code and download files.
+-   **Pixi**: A fast package manager. Follow the [Pixi installation instructions](https://pixi.sh/) for your operating system.
+
+#### Installing Dependencies and Running Python
+
+Once Pixi is installed, open your terminal in the cloned repository directory. You can initialize the project environment and run Jupyter Lab with:
+
+```bash
+pixi run jupyter lab
+```
+
+Or you can use VS Code's Jupyter extension and select the environment created by Pixi.
+
+We use **DuckDB**'s Python interface directly to handle and query large transport datasets highly efficiently, as demonstrated in the separate `demo-py.qmd` file.
 
 </details>
 
