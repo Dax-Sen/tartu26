@@ -127,7 +127,7 @@ TBC but go to [posit.cloud](https://posit.cloud) and create an account, then cre
 
 ## Local Setup {#sec-local}
 
-If you prefer to run the workshop materials on your own computer, you will need to install the software listed in @sec-software and the R packages described in @sec-packages.
+If you prefer to run the workshop materials on your own computer, you can follow the manual setup by installing the software listed in @sec-software and the R packages described in @sec-packages, or use the Docker and Dev Containers setup described in @sec-local-docker.
 
 <details>
 
@@ -180,6 +180,17 @@ install.packages(c(
 ```
 
 </details>
+
+### Docker and Dev Containers {#sec-local-docker}
+
+As an alternative to installing all software manually on your computer, you can run the workshop environment locally using Docker and VS Code Dev Containers. The repository includes a pre-configured development container setup (`.devcontainer`) containing all necessary runtime tools and packages pre-installed.
+
+To use this option:
+
+1.  Ensure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [VS Code](https://code.visualstudio.com/) installed on your machine.
+2.  Install the **Dev Containers** extension in VS Code.
+3.  Clone the repository and open the folder in VS Code.
+4.  Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) to open the Command Palette, and select **Dev Containers: Reopen in Container**.
 
 </details>
 
