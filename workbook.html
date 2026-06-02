@@ -201,10 +201,24 @@ div.csl-indent {
    
   <ul>
   <li><a href="#install-the-required-packages" id="toc-install-the-required-packages" class="nav-link active" data-scroll-target="#install-the-required-packages"><span class="header-section-number">1</span> Install the required packages</a></li>
-  <li><a href="#download-and-prepare-the-data-with-spanishoddata" id="toc-download-and-prepare-the-data-with-spanishoddata" class="nav-link" data-scroll-target="#download-and-prepare-the-data-with-spanishoddata"><span class="header-section-number">2</span> Download and prepare the data with <code>spanishoddata</code></a></li>
-  <li><a href="#generate-the-interactive-flow-map" id="toc-generate-the-interactive-flow-map" class="nav-link" data-scroll-target="#generate-the-interactive-flow-map"><span class="header-section-number">3</span> Generate the interactive flow map</a></li>
+  <li><a href="#download-and-prepare-the-data-with-spanishoddata" id="toc-download-and-prepare-the-data-with-spanishoddata" class="nav-link" data-scroll-target="#download-and-prepare-the-data-with-spanishoddata"><span class="header-section-number">2</span> Download and prepare the data with <code>spanishoddata</code></a>
+  <ul class="collapse">
+  <li><a href="#seville-case-study" id="toc-seville-case-study" class="nav-link" data-scroll-target="#seville-case-study"><span class="header-section-number">2.1</span> Seville case study</a></li>
+  <li><a href="#northern-spain-case-study-pamplona-to-donostia-corridor" id="toc-northern-spain-case-study-pamplona-to-donostia-corridor" class="nav-link" data-scroll-target="#northern-spain-case-study-pamplona-to-donostia-corridor"><span class="header-section-number">2.2</span> Northern Spain case study: Pamplona to Donostia corridor</a></li>
+  </ul></li>
+  <li><a href="#generate-the-interactive-flow-map" id="toc-generate-the-interactive-flow-map" class="nav-link" data-scroll-target="#generate-the-interactive-flow-map"><span class="header-section-number">3</span> Generate the interactive flow map</a>
+  <ul class="collapse">
+  <li><a href="#seville-flow-map" id="toc-seville-flow-map" class="nav-link" data-scroll-target="#seville-flow-map"><span class="header-section-number">3.1</span> Seville flow map</a></li>
+  <li><a href="#northern-spain-flow-map" id="toc-northern-spain-flow-map" class="nav-link" data-scroll-target="#northern-spain-flow-map"><span class="header-section-number">3.2</span> Northern Spain flow map</a></li>
+  </ul></li>
   <li><a href="#setting-up-mapbox-access-token" id="toc-setting-up-mapbox-access-token" class="nav-link" data-scroll-target="#setting-up-mapbox-access-token"><span class="header-section-number">4</span> Setting up Mapbox Access Token</a></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps"><span class="header-section-number">5</span> Next steps</a></li>
+  <li><a href="#cross-border-analysis-spainfrance-border-effect" id="toc-cross-border-analysis-spainfrance-border-effect" class="nav-link" data-scroll-target="#cross-border-analysis-spainfrance-border-effect"><span class="header-section-number">5</span> Cross-border analysis: Spain–France border effect</a>
+  <ul class="collapse">
+  <li><a href="#approach" id="toc-approach" class="nav-link" data-scroll-target="#approach"><span class="header-section-number">5.1</span> Approach</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><span class="header-section-number">5.2</span> Interpretation</a></li>
+  <li><a href="#further-exploration" id="toc-further-exploration" class="nav-link" data-scroll-target="#further-exploration"><span class="header-section-number">5.3</span> Further exploration</a></li>
+  </ul></li>
+  <li><a href="#research-questions" id="toc-research-questions" class="nav-link" data-scroll-target="#research-questions"><span class="header-section-number">6</span> Research questions</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tdscience/tartu26/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -246,6 +260,8 @@ div.csl-indent {
 <h2 data-number="2" class="anchored" data-anchor-id="download-and-prepare-the-data-with-spanishoddata"><span class="header-section-number">2</span> Download and prepare the data with <code>spanishoddata</code></h2>
 <p>Download a load of data from Spain!</p>
 <p><img src="https://github.com/rOpenSpain/spanishoddata/raw/main/man/figures/logo.png" class="img-fluid"></p>
+<section id="seville-case-study" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="seville-case-study"><span class="header-section-number">2.1</span> Seville case study</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get OD data for the most recently days</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>zones <span class="ot">&lt;-</span> <span class="fu">spod_get_zones</span>(<span class="at">zones =</span> <span class="st">"distr"</span>, <span class="at">ver =</span> <span class="dv">2</span>)</span>
@@ -306,35 +322,291 @@ div.csl-indent {
 <span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>flows_seville_time <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"flows_seville_time.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
+<section id="northern-spain-case-study-pamplona-to-donostia-corridor" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="northern-spain-case-study-pamplona-to-donostia-corridor"><span class="header-section-number">2.2</span> Northern Spain case study: Pamplona to Donostia corridor</h3>
+<p>As an alternative to Seville, you can explore mobility patterns in Northern Spain, covering the Basque Country and Navarre regions. This area includes the cities of Pamplona (Iruña) and Donostia (San Sebastián), stretches from the French border to the Bay of Biscay coast, and forms a roughly rectangular study area whose east–west extent is longer than its north–south extent.</p>
+<p>Rather than filtering by a text pattern (as with Seville), we define the study area geographically with a bounding box and select all districts that intersect it. The province codes in the zone <code>id</code> field can also be used: Navarre = <code>31</code>, Gipuzkoa = <code>20</code>, Bizkaia = <code>48</code>, and Álava = <code>01</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get zones</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>zones <span class="ot">&lt;-</span> <span class="fu">spod_get_zones</span>(<span class="at">zones =</span> <span class="st">"distr"</span>, <span class="at">ver =</span> <span class="dv">2</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>valid_dates <span class="ot">&lt;-</span> <span class="fu">spod_get_valid_dates</span>(<span class="dv">2</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>recent_dates <span class="ot">=</span> <span class="fu">tail</span>(valid_dates, <span class="dv">3</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a geographic bounding box for the Northern Spain study area</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Covers from the coast to south of Pamplona, and from the French border</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># westward to include the Pamplona--Donostia corridor</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>bbox_north <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">xmin =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="at">ymin =</span> <span class="fl">42.6</span>, <span class="at">xmax =</span> <span class="sc">-</span><span class="fl">1.0</span>, <span class="at">ymax =</span> <span class="fl">43.5</span>),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="fu">st_crs</span>(<span class="dv">4326</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>bbox_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sfc</span>(bbox_north)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Select zones that intersect the bounding box</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>sf<span class="sc">::</span><span class="fu">sf_use_s2</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>zones_wgs84 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(zones, <span class="dv">4326</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>zones_north <span class="ot">&lt;-</span> zones_wgs84[<span class="fu">st_intersects</span>(zones_wgs84, bbox_sf, <span class="at">sparse =</span> <span class="cn">FALSE</span>)[, <span class="dv">1</span>], ]</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualise the selected zones</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(zones_north))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare location data (centroids) for the flow map</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>locations_north <span class="ot">&lt;-</span> zones_north <span class="sc">|&gt;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_centroid</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_coordinates</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> zones_north<span class="sc">$</span>id) <span class="sc">|&gt;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">lon =</span> X, <span class="at">lat =</span> Y)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Download OD data (uncomment to re-download from source)</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># flows &lt;- spod_get(</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#   type = "origin-destination",</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#   zones = "districts",</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">#   dates = recent_dates</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># od_data_time &lt;- flows |&gt;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(time = as.POSIXct(paste0(date, "T", hour, ":00:00"))) |&gt;</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="co">#   group_by(origin = id_origin, dest = id_destination, time) |&gt;</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co">#   summarise(count = sum(n_trips, na.rm = TRUE), .groups = "drop") |&gt;</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co">#   collect()</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># flows_north_time &lt;- od_data_time |&gt;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(origin %in% zones_north$id &amp; dest %in% zones_north$id)</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(flows_north_time, "flows_north_time.rds")</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(locations_north, "locations_north.rds")</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co"># For workshop use, load precomputed data if available</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">"flows_north_time.rds"</span>)) {</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  flows_north_time <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"flows_north_time.rds"</span>)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Precomputed Northern Spain data not found. Run the download block above."</span>)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
 <section id="generate-the-interactive-flow-map" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="generate-the-interactive-flow-map"><span class="header-section-number">3</span> Generate the interactive flow map</h2>
+<section id="seville-flow-map" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="seville-flow-map"><span class="header-section-number">3.1</span> Seville flow map</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flowmap_seville_interactive <span class="ot">&lt;-</span> <span class="fu">flowmapblue</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> locations_seville,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">flows =</span> flows_seville_time,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapboxAccessToken =</span> <span class="fu">Sys.getenv</span>(<span class="st">"MAPBOX_TOKEN"</span>),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">darkMode =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">animation =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">clustering =</span> <span class="cn">TRUE</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the map</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>flowmap_seville_interactive</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>flowmap_seville_interactive <span class="ot">&lt;-</span> <span class="fu">flowmapblue</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> locations_seville,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">flows =</span> flows_seville_time,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapboxAccessToken =</span> <span class="fu">Sys.getenv</span>(<span class="st">"MAPBOX_TOKEN"</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">darkMode =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">animation =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">clustering =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the map</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>flowmap_seville_interactive</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="northern-spain-flow-map" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="northern-spain-flow-map"><span class="header-section-number">3.2</span> Northern Spain flow map</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>flowmap_north_interactive <span class="ot">&lt;-</span> <span class="fu">flowmapblue</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> locations_north,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">flows =</span> flows_north_time,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mapboxAccessToken =</span> <span class="fu">Sys.getenv</span>(<span class="st">"MAPBOX_TOKEN"</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">darkMode =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">animation =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">clustering =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the map</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>flowmap_north_interactive</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <details>
 <summary>
 Getting a Mapbox token
 </summary>
 </details></section>
+</section>
 <section id="setting-up-mapbox-access-token" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="setting-up-mapbox-access-token"><span class="header-section-number">4</span> Setting up Mapbox Access Token</h2>
 <p>Get a free token from https://account.mapbox.com/access-tokens/</p>
 <p>Or, longer term solution: <code>usethis::edit_r_environ()</code> Restart R after setting the token for it to take effect</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">MAPBOX_TOKEN =</span> <span class="st">"YOUR_MAPBOX_ACCESS_TOKEN"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">MAPBOX_TOKEN=</span><span class="st">"YOUR_MAPBOX_ACCESS_TOKEN"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </section>
-<section id="next-steps" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">5</span> Next steps</h2>
+<section id="cross-border-analysis-spainfrance-border-effect" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="cross-border-analysis-spainfrance-border-effect"><span class="header-section-number">5</span> Cross-border analysis: Spain–France border effect</h2>
+<p>One of the most interesting research questions we can tackle with the Northern Spain study area is: <strong>to what extent does the national border between Spain and France act as a barrier to human mobility?</strong> The v2 spanishoddata data includes French zones (with IDs starting <code>FR</code>) alongside Spanish zones, making it possible to quantify the “border deterrence effect” – the reduction in travel attributable to the presence of an international boundary, after controlling for distance.</p>
+<section id="approach" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="approach"><span class="header-section-number">5.1</span> Approach</h3>
+<p>Our analysis proceeds in five steps:</p>
+<ol type="1">
+<li><strong>Identify French and Spanish zones</strong> in the study area using the zone ID prefix (<code>FR</code> = France, all-numeric = Spain).</li>
+<li><strong>Classify each OD pair</strong> as cross-border (ES–FR), within-Spain (ES–ES), or within-France (FR–FR).</li>
+<li><strong>Aggregate trip volumes</strong> by hour and border-crossing status to reveal temporal patterns.</li>
+<li><strong>Estimate the border effect</strong> by comparing trip counts at comparable distances: for each distance band, what is the ratio of within-Spain trips to cross-border trips?</li>
+<li><strong>Visualise</strong> the results as a distance-decay comparison plot.</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── 1. Load zones and classify by country ──────────────────────────────</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sf<span class="sc">::</span><span class="fu">sf_use_s2</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>zones <span class="ot">&lt;-</span> <span class="fu">spod_get_zones</span>(<span class="at">zones =</span> <span class="st">"distr"</span>, <span class="at">ver =</span> <span class="dv">2</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate the Northern Spain study area</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>bbox_north <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">xmin =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="at">ymin =</span> <span class="fl">42.6</span>, <span class="at">xmax =</span> <span class="sc">-</span><span class="fl">1.0</span>, <span class="at">ymax =</span> <span class="fl">43.5</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="fu">st_crs</span>(<span class="dv">4326</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>bbox_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sfc</span>(bbox_north)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>zones_wgs84 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(zones, <span class="dv">4326</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>zones_north <span class="ot">&lt;-</span> zones_wgs84[</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_intersects</span>(zones_wgs84, bbox_sf, <span class="at">sparse =</span> <span class="cn">FALSE</span>)[, <span class="dv">1</span>],</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Tag each zone by country</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>zones_north <span class="ot">&lt;-</span> zones_north <span class="sc">|&gt;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">"^FR"</span>, id), <span class="st">"FR"</span>, <span class="st">"ES"</span>))</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zones in study area:"</span>, <span class="fu">nrow</span>(zones_north), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Spanish:"</span>, <span class="fu">sum</span>(zones_north<span class="sc">$</span>country <span class="sc">==</span> <span class="st">"ES"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  French: "</span>, <span class="fu">sum</span>(zones_north<span class="sc">$</span>country <span class="sc">==</span> <span class="st">"FR"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># ── 2. Get OD data and classify each pair ───────────────────────────</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>valid_dates <span class="ot">&lt;-</span> <span class="fu">spod_get_valid_dates</span>(<span class="dv">2</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>recent_dates <span class="ot">&lt;-</span> <span class="fu">tail</span>(valid_dates, <span class="dv">3</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>flows <span class="ot">&lt;-</span> <span class="fu">spod_get</span>(</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"origin-destination"</span>,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">zones =</span> <span class="st">"districts"</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">dates =</span> recent_dates</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a lookup table: zone ID → country</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>zone_country <span class="ot">&lt;-</span> zones_north <span class="sc">|&gt;</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, country)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to study-area zones and tag each OD pair</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>od_north <span class="ot">&lt;-</span> flows <span class="sc">|&gt;</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    id_origin <span class="sc">%in%</span> zones_north<span class="sc">$</span>id,</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    id_destination <span class="sc">%in%</span> zones_north<span class="sc">$</span>id</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(zone_country, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id_origin"</span> <span class="ot">=</span> <span class="st">"id"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">country_origin =</span> country) <span class="sc">|&gt;</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(zone_country, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id_destination"</span> <span class="ot">=</span> <span class="st">"id"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">country_dest =</span> country) <span class="sc">|&gt;</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">border_crossing =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>      country_origin <span class="sc">!=</span> country_dest <span class="sc">~</span> <span class="st">"cross-border"</span>,</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>      country_origin <span class="sc">==</span> <span class="st">"ES"</span>         <span class="sc">~</span> <span class="st">"within-Spain"</span>,</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>      country_origin <span class="sc">==</span> <span class="st">"FR"</span>         <span class="sc">~</span> <span class="st">"within-France"</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="co"># ── 3. Temporal patterns by border status ──────────────────────────</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>hourly_by_border <span class="ot">&lt;-</span> od_north <span class="sc">|&gt;</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(hour, border_crossing) <span class="sc">|&gt;</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_trips =</span> <span class="fu">sum</span>(n_trips, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot: trip volumes by hour, faceted by border status</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hourly_by_border, <span class="fu">aes</span>(<span class="at">x =</span> hour, <span class="at">y =</span> total_trips, <span class="at">colour =</span> border_crossing)) <span class="sc">+</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Hourly trip volumes by border-crossing status"</span>,</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"Northern Spain study area,"</span>, </span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">paste</span>(recent_dates, <span class="at">collapse =</span> <span class="st">", "</span>)),</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Hour of day"</span>,</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Total trips (log scale)"</span>,</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Flow type"</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="co"># ── 4. Distance-decay comparison ───────────────────────────────────</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare within-Spain vs cross-border flows at similar distances</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>dist_comparison <span class="ot">&lt;-</span> od_north <span class="sc">|&gt;</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(distance <span class="sc">&gt;</span> <span class="dv">0</span>, distance <span class="sc">&lt;</span> <span class="dv">100</span>) <span class="sc">|&gt;</span>    <span class="co"># exclude intra-zonal (d=0) and extreme</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dist_band =</span> <span class="fu">cut</span>(distance, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">10</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(dist_band, border_crossing) <span class="sc">|&gt;</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_trips =</span> <span class="fu">sum</span>(n_trips, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_pairs     =</span> <span class="fu">n</span>(),</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups     =</span> <span class="st">"drop"</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the border deterrence ratio</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>border_ratio <span class="ot">&lt;-</span> dist_comparison <span class="sc">|&gt;</span></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(border_crossing <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"within-Spain"</span>, <span class="st">"cross-border"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols     =</span> dist_band,</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from  =</span> border_crossing,</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> total_trips,</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="dv">0</span></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">deterrence_ratio =</span> <span class="st">`</span><span class="at">within-Spain</span><span class="st">`</span> <span class="sc">/</span> (<span class="st">`</span><span class="at">cross-border</span><span class="st">`</span> <span class="sc">+</span> <span class="dv">1</span>),  <span class="co"># +1 avoids Inf</span></span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>    <span class="at">deterrence_label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(deterrence_ratio, <span class="dv">1</span>), <span class="st">"×"</span>)</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(border_ratio, <span class="fu">aes</span>(<span class="at">x =</span> dist_band, <span class="at">y =</span> deterrence_ratio)) <span class="sc">+</span></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> deterrence_label), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Border deterrence effect by distance band"</span>,</span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Ratio of within-Spain to cross-border trips (&gt;1 = border deters travel)"</span>,</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Distance band (km)"</span>,</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Within-Spain / Cross-border trip ratio"</span></span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a><span class="co"># ── 5. Summary statistics ──────────────────────────────────────────</span></span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== Summary: Border effect ===</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>total_cross <span class="ot">&lt;-</span> <span class="fu">sum</span>(hourly_by_border<span class="sc">$</span>total_trips[</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>  hourly_by_border<span class="sc">$</span>border_crossing <span class="sc">==</span> <span class="st">"cross-border"</span></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>total_spain <span class="ot">&lt;-</span> <span class="fu">sum</span>(hourly_by_border<span class="sc">$</span>total_trips[</span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>  hourly_by_border<span class="sc">$</span>border_crossing <span class="sc">==</span> <span class="st">"within-Spain"</span></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Cross-border trips: %s (%.1f%% of all trips)</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">comma</span>(total_cross),</span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>  <span class="dv">100</span> <span class="sc">*</span> total_cross <span class="sc">/</span> (total_cross <span class="sc">+</span> total_spain)</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="interpretation" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="interpretation"><span class="header-section-number">5.2</span> Interpretation</h3>
+<ul>
+<li><strong>Temporal pattern</strong>: Cross-border flows typically show a flatter daily profile than within-Spain commuting flows, suggesting more leisure/tourism travel and less routine commuting across the border.</li>
+<li><strong>Distance-decay</strong>: The <code>deterrence_ratio</code> column shows how many more within-Spain trips occur than cross-border trips at the same distance. A ratio of, say, 10× at the 10–20 km band means there are 10 times more trips between Spanish zones 15 km apart than between a Spanish and French zone 15 km apart.</li>
+<li><strong>Key question</strong>: At what distance does the border effect become negligible? If the ratio approaches 1 at longer distances, the border may primarily suppress short-distance local trips.</li>
+</ul>
+</section>
+<section id="further-exploration" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="further-exploration"><span class="header-section-number">5.3</span> Further exploration</h3>
+<ul>
+<li>Repeat the analysis for <strong>weekdays vs weekends</strong> to see if cross-border commuting is more common on certain days.</li>
+<li>Use the <code>activity_origin</code> field to see whether cross-border trips are predominantly work, leisure, or study-related.</li>
+<li>Expand the study area westward to include <strong>Bilbao</strong> and compare the border effect at Irun/Hendaye (major crossing) versus more remote Pyrenean crossings.</li>
+<li>Download a <strong>full month</strong> of data and examine how the border effect changes on public holidays and during school vacations.</li>
+</ul>
+</section>
+</section>
+<section id="research-questions" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="research-questions"><span class="header-section-number">6</span> Research questions</h2>
+<p>Below are suggested research questions you can explore with the <code>spanishoddata</code> package and the tools introduced in this workbook. They range from descriptive to analytical and are designed to be tractable within a short workshop or assignment.</p>
+<ol type="1">
+<li><p><strong>Temporal commuting patterns</strong> – How do morning and evening peak flows differ between weekdays and weekends? Can you identify distinct commuter corridors within your chosen study area?</p></li>
+<li><p><strong>Cross-border mobility</strong> – The v2 data includes trips to and from France. What proportion of flows in the Northern Spain study area cross the international border, and how does this vary by time of day? <em>(See the cross-border analysis section above for a worked example.)</em></p></li>
+<li><p><strong>Socio-demographic differences</strong> – Using the <code>income</code>, <code>age</code>, and <code>sex</code> variables available in v2, do flow patterns differ between demographic groups? For example, do higher-income groups travel further or at different times?</p></li>
+<li><p><strong>Functional urban area definition</strong> – Compare the 10 km buffer approach used for Seville with the bounding-box approach used for Northern Spain. How sensitive are the resulting flow patterns to the choice of study area boundary?</p></li>
+<li><p><strong>Activity-purpose flows</strong> – The <code>activity_origin</code> and <code>activity_destination</code> fields classify trips by purpose (home, work, regular, irregular, study). What is the dominant flow purpose in your study area, and how does the spatial structure of work-related flows differ from leisure-related flows?</p></li>
+<li><p><strong>Intra-zonal vs inter-zonal trips</strong> – Intra-zonal trips (where origin equals destination) often dominate OD datasets. What share of trips are intra-zonal in your study area, and how does excluding them change the visual pattern of the flow map?</p></li>
+<li><p><strong>Seasonal or special-event variation</strong> – If you download data for multiple time periods, can you detect changes in mobility associated with public holidays, festivals (e.g., San Fermín in Pamplona), or seasonal tourism patterns along the coast?</p></li>
+<li><p><strong>Comparative urban analysis</strong> – Replicate the analysis for both Seville and Northern Spain. Which city has higher average trip distances? Which shows more polycentric flow patterns (multiple distinct centres rather than a single dominant hub)?</p></li>
+</ol>
 <p>For a detailed walkthrough of analysing origin-destination data in the London Cycle Hire system, see the <a href="https://tdscience.github.io/dstp/s3.html#analyisng-origin-destination-data-in-london-cycle-hire-system">DSTP course materials</a>.</p>
 <p>Also see <span class="citation" data-cites="kotovAGIT2025Workshop2025">Kotov (<a href="#ref-kotovAGIT2025Workshop2025" role="doc-biblioref">2025</a>)</span> which includes:</p>
 <ul>
