@@ -6,7 +6,9 @@ pagetitle: "Prerequisites"
 ## Introduction {#sec-intro}
 
 Welcome to the Mobile Tartu 2026 Transport Data Science workshop!
-This document outlines the prerequisites for the workshop.
+This document outlines the prerequisites for the workshop, and is intended as homework to be completed before the session.
+If you have any issues completing the prerequisites, please get in touch on [github.com/tdscience/tartu26](https://github.com/tdscience/tartu26/issues) or by sending the organiser (Robin Lovelace) an email.
+
 There are two main ways to run the workshop materials:
 
 1.  **Cloud-based setup** using GitHub Codespaces, Posit Cloud, or similar services (see @sec-cloud).
@@ -92,9 +94,9 @@ It's worth being aware of a few different ways to run code interactively in the 
 Ways to run code in GitHub Codespaces:
 
 1.  **Terminal**: You can run any command-line code directly in the integrated terminal.
-    This is useful for running scripts, installing packages, or executing commands that don't require an interactive environment.
+    This is useful for running scripts, installing packages, or executing commands that don't require an interactive environment. To initiate an R session, simply type `R` in the terminal and press Enter. For Python, type `python` and press Enter.
 
-2.  **Quarto Documents**: You can open the `.qmd` files in the editor and run code chunks interactively by typing Ctrl+Enter (or Cmd+Enter on Mac) to run the code line-by-line (or even selected parts of code), the recommended way.
+2.  **Quarto Documents (recommended)**: You can open existing or new `.qmd` files in the editor and run code chunks interactively by typing Ctrl+Enter (or Cmd+Enter on Mac) to run the code line-by-line (or even selected parts of code), the recommended way.
     You can also use the "Run" buttons that appear when you hover over code chunks.
     This allows you to execute code and see results inline, which is great for learning and experimentation.
 
