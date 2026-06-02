@@ -25,6 +25,9 @@ jobs:
       - name: Mark workspace as safe for git
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
+      - name: Install Python dependencies
+        run: python3 -m pip install --break-system-packages duckdb pandas pyarrow jupyter-cache ipykernel plotly || python3 -m pip install duckdb pandas pyarrow jupyter-cache ipykernel plotly
+
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
