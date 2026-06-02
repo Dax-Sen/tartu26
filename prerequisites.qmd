@@ -225,6 +225,22 @@ Or you can use VS Code's Jupyter extension and select the environment created by
 
 We use **DuckDB**'s Python interface directly to handle and query large transport datasets highly efficiently, as demonstrated in the separate `demo-py.qmd` file.
 
+#### Rendering Quarto Documents with Pixi
+
+To render or preview the Quarto files locally using the Python environment managed by Pixi (which contains `nbclient` and all data science dependencies), prefix your Quarto commands with `pixi run`:
+
+```bash
+pixi run quarto render demo-py.qmd
+pixi run quarto preview
+```
+
+Alternatively, you can activate the Pixi environment shell first and then run Quarto normally:
+
+```bash
+pixi shell
+quarto render demo-py.qmd
+```
+
 </details>
 
 ### Data {#sec-data}
