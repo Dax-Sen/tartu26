@@ -118,7 +118,7 @@ If it worked it should look something like this:
 Congratulations if so, you have completed the prerequisites for the workshop and are ready to start learning about transport data science with R and Python!
 
 You can also get the same 'devcontainer' environment shown in the image above running locally on your machine using VS Code and the Remote Containers extension.
-This requires you to have Docker installed and running on your machine, and may require admin rights to set up (see the [Docker and Dev Containers section](#sec-local-docker) for more details on local setup).
+This requires you to have Docker installed and running on your machine, and may require admin rights to set up (see @sec-local-docker for more details on local setup).
 
 <details>
 <summary>Other cloud-based environments</summary>
@@ -144,10 +144,10 @@ If you prefer to run the workshop materials on your own computer, we recommend a
 
 The workshop materials support both **R** and **Python** development paths. You can choose the setup method that best fits your preference:
 
-<details>
-<summary><b>Option A: Local devcontainer (recommended if you have admin rights to install Docker)</b></summary>
+### Option A: Local devcontainer (recommended if you have admin rights to install Docker) {#sec-local-docker}
 
-### Docker and Dev Containers {.unnumbered .unlisted #sec-local-docker}
+<details>
+<summary>Click to view setup steps</summary>
 
 This is the most reliable way to ensure a consistent environment. The repository includes a pre-configured `.devcontainer` that sets up all dependencies (R, Python, Quarto, VS Code extensions) inside an isolated container.
 
@@ -160,19 +160,21 @@ To use this option:
 
 </details>
 
+### Option B: Local R/RStudio installation {#sec-local-r}
+
 <details>
-<summary><b>Option B: Local R/RStudio installation</b></summary>
+<summary>Click to view setup steps</summary>
 
 If you prefer a native R setup on your machine, please ensure you have the required runtimes, IDE, and tools installed.
 
-### Software Requirements {.unnumbered .unlisted #sec-software}
+#### Software Requirements {#sec-software}
 
 -   **R (\>= 4.3)**: The language runtime.
 -   **RStudio** or **Positron**: The IDE.
 -   **Quarto CLI**: Used to compile and render the workshop documents and workbook.
 -   **Git**: Version control software to manage code and download files.
 
-### R Packages {.unnumbered .unlisted #sec-packages}
+#### R Packages {#sec-packages}
 
 Install the necessary packages for the workshop using the `pak` package (recommended):
 
@@ -205,12 +207,14 @@ install.packages(c(
 
 </details>
 
+### Option C: Local Python/VS Code installation {#sec-local-python}
+
 <details>
-<summary><b>Option C: Local Python/VS Code installation</b></summary>
+<summary>Click to view setup steps</summary>
 
 If you prefer a native Python setup on your machine, we use a modern, fast conda/mamba alternative package manager called **Pixi** to quickly install and manage all dependencies.
 
-### Software Requirements {.unnumbered .unlisted #sec-software-py}
+#### Software Requirements {#sec-software-py}
 
 -   **Python (\>= 3.10)**: The language runtime.
 -   **VS Code** or **Positron**: The IDE.
@@ -218,7 +222,7 @@ If you prefer a native Python setup on your machine, we use a modern, fast conda
 -   **Git**: Version control software to manage code and download files.
 -   **Pixi**: A fast package manager. Follow the [Pixi installation instructions](https://pixi.sh/) for your operating system.
 
-### Installing Dependencies and Running Python {.unnumbered .unlisted}
+#### Installing Dependencies and Running Python
 
 Once Pixi is installed, open your terminal in the cloned repository directory. You can initialize the project environment and run Jupyter Lab with:
 
