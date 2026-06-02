@@ -1,12 +1,7 @@
 {
 	"name": "Transport data science container",
 	// Use pre-built image by default:
-	"image": "ghcr.io/itsleeds/tds",
-	// Uncomment the build section below and comment out "image" above to rebuild from ../Dockerfile
-	// "build": {
-	// 	"dockerfile": "../Dockerfile"
-	// },
-	"postCreateCommand": "bash .devcontainer/setup.sh",
+	"image": "ghcr.io/tdscience/tartu26:latest",
 	"customizations": {
 		"vscode": {
 			"extensions": [
