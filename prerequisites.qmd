@@ -96,24 +96,37 @@ Ways to run code in GitHub Codespaces:
 1.  **Terminal**: You can run any command-line code directly in the integrated terminal.
     This is useful for running scripts, installing packages, or executing commands that don't require an interactive environment. To initiate an R session, simply type `R` in the terminal and press Enter. For Python, type `python` and press Enter.
 
-2.  **Quarto Documents (recommended)**: You can open existing or new `.qmd` files in the editor and run code chunks interactively by typing Ctrl+Enter (or Cmd+Enter on Mac) to run the code line-by-line (or even selected parts of code), the recommended way.
+<!-- TODO: add screenshots -->
+
+2.  **Quarto Documents (recommended)**: You can open existing or new `.qmd` files in the editor and run code in the chunks interactively by typing Ctrl+Enter (or Cmd+Enter on Mac) to run the code line-by-line or even selected parts of code.
     You can also use the "Run" buttons that appear when you hover over code chunks.
     This allows you to execute code and see results inline, which is great for learning and experimentation.
 
-3.  **Jupyter Notebooks**: If you have Jupyter notebooks in the repository, you can open them in the editor and run cells interactively, similar to how you would in a local Jupyter environment.
+<!-- TODO: screenshot, necessary? -->
 
-4.  **`quarto render` and `quarto preview`**: For rendering the entire Quarto documents, you can use the terminal to run `quarto render <filename.qmd>` to generate the output files (e.g. HTML), or `quarto preview <filename.qmd>` to render and open a live preview in the browser.
+3.  **Jupyter Notebooks**: If you are familiar with Jupyter notebooks, these can be used in the same way as Quarto documents, allowing you to run code interactively and see results inline.
+
+4.  **`quarto render` and `quarto preview`**: For rendering the entire Quarto site, you can use the terminal to run `quarto preview` to generate dynamic outputs (e.g. HTML), or `quarto preview <filename.qmd>` to render and open a live preview in the browser.
 :::
 
 To check that the code runs for this tutorial, open the `demo.qmd` file in the editor and run the code chunks interactively using Ctrl+Enter (or Cmd+Enter on Mac) to execute the code line-by-line.
 
-If it worked it should look something like this:
+If it worked it should look something like this: 
 
 ![](images/paste-2.png)
 
+Congratulations if so, you have completed the prerequisites for the workshop and are ready to start learning about transport data science with R and Python!
+
+You can also get the same 'devcontainer' environment shown in the image above running locally on your machine using VS Code and the Remote Containers extension.
+This requires you to have Docker installed and running on your machine, and may require admin rights to set up (see @sec-local-docker for more details on local setup).
+
+<details>
+<summary>Other cloud-based environments</summary>
+
 Other cloud services are available. 
-One that is well-suited for data science is Posit Cloud. 
+One that is well-suited for data science is Posit Cloud, but unfortunately has a [maximum session RAM use of only 1GB](https://posit.cloud/plans), which is not enough for the datasets we'll be using in this workshop.
 For these cloud services, you may still need to install the required packages the first time you launch a new session (see @sec-packages).
+</details>
 
 ### Position Cloud {#sec-posit}
 
@@ -127,7 +140,7 @@ TBC but go to [posit.cloud](https://posit.cloud) and create an account, then cre
 
 ## Local Setup {#sec-local}
 
-If you prefer to run the workshop materials on your own computer, you can follow the manual setup by installing the software listed in @sec-software and the R packages described in @sec-packages, or use the Docker and Dev Containers setup described in @sec-local-docker.
+If you prefer to run the workshop materials on your own computer, you will need to install the software listed in @sec-software and the R packages described in @sec-packages.
 
 <details>
 
@@ -180,17 +193,6 @@ install.packages(c(
 ```
 
 </details>
-
-### Docker and Dev Containers {#sec-local-docker}
-
-As an alternative to installing all software manually on your computer, you can run the workshop environment locally using Docker and VS Code Dev Containers. The repository includes a pre-configured development container setup (`.devcontainer`) containing all necessary runtime tools and packages pre-installed.
-
-To use this option:
-
-1.  Ensure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [VS Code](https://code.visualstudio.com/) installed on your machine.
-2.  Install the **Dev Containers** extension in VS Code.
-3.  Clone the repository and open the folder in VS Code.
-4.  Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) to open the Command Palette, and select **Dev Containers: Reopen in Container**.
 
 </details>
 
