@@ -128,15 +128,6 @@ One that is well-suited for data science is Posit Cloud, but unfortunately
 For these cloud services, you may still need to install the required packages the first time you launch a new session (see the [R Packages section](#sec-packages)).
 </details>
 
-### Posit Cloud {#sec-posit}
-
-<details>
-
-<summary>Instructions for Posit Cloud</summary>
-
-TBC but go to [posit.cloud](https://posit.cloud) and create an account, then create a new project and link it to the GitHub repository for the workshop.
-
-</details>
 
 ## Local Setup {#sec-local}
 
