@@ -135,6 +135,12 @@ If you prefer to run the workshop materials on your own computer, we recommend a
 
 The workshop materials support both **R** and **Python** development paths. You can choose the setup method that best fits your preference:
 
+For local setup, we recommend using the [GitHub CLI (`gh`)](https://cli.github.com/) to clone the repository and interact with GitHub from your terminal.
+
+```bash
+gh repo clone tdscience/tartu26
+```
+
 ### Option A: Local devcontainer (recommended if you have admin rights to install Docker) {#sec-local-docker}
 
 <details>

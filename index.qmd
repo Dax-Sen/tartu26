@@ -2,8 +2,9 @@
 number-sections: false
 ---
 
-
-This workshop teaches you how to work with these datasets and generate meaningful transport planning-related results. Exercises will stretch more advanced attendees.
+This is the homepage for the "Data Science for Transport Planning: from origin-destination to route network datasets" workshop.
+It will be delivered as part of the [PhD School](https://mobiletartu.ut.ee/workshops-and-academic-lecture/) that precedes the [Mobile Tartu 2026 conference](https://mobiletartu.ut.ee/).
+In it you will learn how to work with these datasets and generate meaningful transport planning-related results. Exercises will stretch more advanced attendees.
 
 It is based on data from the {spanishoddata} [@kotov2026], a package that was conceived during Mobile Tartu 2024, which provides access to a large spatio-temporal dataset of origin-destination (OD) flows in Spain.
 
@@ -25,6 +26,6 @@ If you enjoyed this course, you may want to check out some of the links below:
 
 - The [Data Science for Transport Planning website](https://tdscience.github.io/dstp/) with more sessions taught over 2 days.
 - The [Transport Data Science](https://itsleeds.github.io/tds) course materials from the University of Leeds, which cover a wider range of topics and datasets.
-- ... Please let us know of more materials in the [issue tracker](https://github.com/tdscience/tartu26/issues)
+- The Transportation chapter of [Geocomputation with R](https://r.geocompx.org) book @lovelaceGeocomputation2025, which includes a section on OD data and route networks.
 
-*Last updated: 2026-05-28*
+## References
