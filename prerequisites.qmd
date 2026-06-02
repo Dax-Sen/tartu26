@@ -41,6 +41,7 @@ Go to [GitHub](https://github.com) and sign-up if you haven't already done so.
 ### 🎓 GitHub Academic Benefits (Free GitHub Pro & Copilot)
 
 If you are a student, researcher, or teacher at an accredited academic institution, you can sign up for the **[GitHub Global Campus](https://education.github.com/)** program to get free premium benefits:
+
 - **GitHub Pro**: Upgraded account limits, including more **GitHub Codespaces** hours and storage (ideal for running data-intensive environments like this workshop).
 - **GitHub Copilot**: Free access to GitHub's AI developer tool to write code, debug, and learn faster.
 - **Developer Packs**: Free access to top-tier developer tools, cloud hosting credits, and subscriptions.
