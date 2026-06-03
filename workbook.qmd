@@ -2,8 +2,6 @@
 title: "Spatio-temporal data with OD data"
 ---
 
-This workbook builds on the tutorial "Analysing massive open human mobility data in R using spanishoddata, duckdb and flowmaps" [@kotovAGIT2025Workshop2025], and the spatio-temporal data [session](https://tdscience.github.io/dstp/s4.html) in the [Data Science for Transport Planning course](https://tdscience.github.io/dstp/).
-
 ## Install the required packages
 
 ```{r}
@@ -17,80 +15,9 @@ library(tmap)
 tmap_mode("view")
 ```
 
-## Download and prepare the data with `spanishoddata`
+## Download and prepare the data
 
-Download a load of data from Spain!
-
-![](https://github.com/rOpenSpain/spanishoddata/raw/main/man/figures/logo.png)
-
-### Seville case study
-
-```{r}
-#| label: flowmap-seville
-#| eval: false
-#| echo: true
-#| code-summary: "Reproducible example of an interactive flow map for Seville"
-
-
-# Get OD data for the most recently days
-zones <- spod_get_zones(zones = "distr", ver = 2)
-valid_dates <- spod_get_valid_dates(2)
-recent_dates = tail(valid_dates, 3)
-
-# Identify zones corresponding to Seville
-zones_seville <- zones |>
-  filter(grepl("^Sevilla distrito", name, ignore.case = TRUE))
-mapview::mapview(zones_seville)
-
-# Create a 10km buffer to define the Functional Urban Area (FUA)
-zones_seville_fua <- zones[st_buffer(zones_seville, dist = 10000), ]
-plot(st_geometry(zones_seville_fua))
-
-# Prepare the location data (centroids) for the flow map
-sf::sf_use_s2(FALSE)
-locations_seville <- zones_seville_fua |>
-  st_transform(crs = 4326) |>
-  st_centroid() |>
-  st_coordinates() |>
-  as.data.frame() |>
-  mutate(id = zones_seville_fua$id) |>
-  rename(lon = X, lat = Y)
-
-# Uncomment to re-download and process OD data from source
-flows <- spod_get(
-  type = "origin-destination",
-  zones = "districts",
-  dates = recent_dates
-)
-
-od_data_time <- flows |>
-  mutate(time = as.POSIXct(paste0(date, "T", hour, ":00:00"))) |>
-  group_by(origin = id_origin, dest = id_destination, time) |>
-  summarise(count = sum(n_trips, na.rm = TRUE), .groups = "drop") |>
-  collect()
-
-flows_seville_time <- od_data_time |>
-  filter(origin %in% zones_seville_fua$id & dest %in% zones_seville_fua$id)
-
-saveRDS(flows_seville_time, "flows_seville_time.rds")
-saveRDS(locations_seville, "locations_seville.rds")
-
-# Load precomputed data to keep runtime short for workshop use
-if (!file.exists("flows_seville_time.rds")) {
-  # If gh is available and authenticated, this may download the file quickly.
-  system("gh release download v1 --pattern flows_seville_time.rds")
-}
-
-if (!file.exists("flows_seville_time.rds")) {
-  download.file(
-    "https://github.com/tdscience/dstp/releases/download/v1/flows_seville_time.rds",
-    "flows_seville_time.rds"
-  )
-}
-
-flows_seville_time <- readRDS("flows_seville_time.rds")
-
-```
+The example builds on the code in the [Prerequisites](prerequisites.qmd) section (see [demo.qmd](demo.qmd) for a minimal example).
 
 ### Northern Spain case study: Pamplona to Donostia corridor
 
@@ -163,61 +90,6 @@ if (file.exists("flows_north_time.rds")) {
 
 ## Generate the interactive flow map
 
-### Seville flow map
-
-```{r}
-#| eval: false
-flowmap_seville_interactive <- flowmapblue(
-  locations = locations_seville,
-  flows = flows_seville_time,
-  mapboxAccessToken = Sys.getenv("MAPBOX_TOKEN"),
-  darkMode = TRUE,
-  animation = FALSE,
-  clustering = TRUE
-)
-
-# Display the map
-flowmap_seville_interactive
-```
-
-### Seville flow map using `mapgl`
-
-Alternatively, we can use the `mapgl` package to visualize the flows with high-performance WebGL rendering via the `flowmap.gl` integration. This operates entirely within the browser without external services, and adds an interactive timeline scrubber to explore temporal trends.
-
-```{r}
-#| label: flowmap-seville-mapgl
-#| eval: false
-#| echo: true
-#| code-summary: "Render the Seville flow map using mapgl and MapLibre"
-
-library(mapgl)
-
-# Create the MapLibre map centered on Seville
-seville_mapgl <- maplibre(
-  style = carto_style("dark-matter"),
-  center = c(-5.983, 37.389),
-  zoom = 11,
-  projection = "mercator"
-) |>
-  add_flowmap(
-    id = "seville-flows",
-    locations = locations_seville,
-    flows = flows_seville_time,
-    flow_time_column = "time",
-    flow_color_scheme = "Teal",
-    flow_dark_mode = TRUE
-  ) |>
-  add_time_control(
-    data = flows_seville_time,
-    time_column = "time",
-    time_interval = "hour",
-    title = "Seville OD Flows"
-  )
-
-# Display the map
-seville_mapgl
-```
-
 ### Northern Spain flow map
 
 ```{r}
@@ -239,12 +111,49 @@ flowmap_north_interactive <- flowmapblue(
 flowmap_north_interactive
 ```
 
+### Northern Spain flow map using `mapgl`
+
+Alternatively, we can use the `mapgl` package to visualize the Northern Spain flows using high-performance WebGL rendering. This operates entirely within the browser without requiring a Mapbox account, and adds an interactive timeline scrubber to explore the spatio-temporal trends.
+
+```{r}
+#| label: flowmap-northern-spain-mapgl
+#| eval: false
+#| echo: true
+#| code-summary: "Render the Northern Spain flow map using mapgl and MapLibre"
+
+library(mapgl)
+
+# Create the MapLibre map centered on the Northern Spain corridor
+north_mapgl <- maplibre(
+  style = carto_style("dark-matter"),
+  center = c(-1.75, 43.05),
+  zoom = 8.5,
+  projection = "mercator"
+) |>
+  add_flowmap(
+    id = "north-flows",
+    locations = locations_north,
+    flows = flows_north_time,
+    flow_time_column = "time",
+    flow_color_scheme = "Teal",
+    flow_dark_mode = TRUE
+  ) |>
+  add_time_control(
+    data = flows_north_time,
+    time_column = "time",
+    time_interval = "hour",
+    title = "Northern Spain OD Flows"
+  )
+
+# Display the map
+north_mapgl
+```
+
 ```{r}
 #| eval: false
 #| echo: false
 
-# Save the maps as HTML files
-htmlwidgets::saveWidget(flowmap_seville_interactive, "seville_flowmap.html")
+# Save the map as an HTML file
 htmlwidgets::saveWidget(flowmap_north_interactive, "north_spain_flowmap.html")
 ```
 
@@ -446,6 +355,11 @@ Below are suggested research questions you can explore with the `spanishoddata` 
 
 8. **Comparative urban analysis** -- Replicate the analysis for both Seville and Northern Spain. Which city has higher average trip distances? Which shows more polycentric flow patterns (multiple distinct centres rather than a single dominant hub)?
 
+## Further resources
+
+This workbook builds on the tutorial "Analysing massive open human mobility data in R using spanishoddata, duckdb and flowmaps" [@kotovAGIT2025Workshop2025], and the spatio-temporal data [session](https://tdscience.github.io/dstp/s4.html) in the [Data Science for Transport Planning course](https://tdscience.github.io/dstp/).
+For a detailed description of the dataset and its potential applications, see the original paper introducing the `spanishoddata` package [@kotov2026].
+
 For a detailed walkthrough of analysing origin-destination data in the London Cycle Hire system, see the [DSTP course materials](https://tdscience.github.io/dstp/s3.html#analyisng-origin-destination-data-in-london-cycle-hire-system).
 
 Also see @kotovAGIT2025Workshop2025 which includes:
@@ -453,3 +367,5 @@ Also see @kotovAGIT2025Workshop2025 which includes:
 -   [Setting up the software](https://www.ekotov.pro/agit-2025-spanishoddata/software-setup.html)
 -   [Importing the data](https://www.ekotov.pro/agit-2025-spanishoddata/1-mobility-data.html)
 -   [Visualising the data with flowmaps](https://www.ekotov.pro/agit-2025-spanishoddata/2-flowmapping.html)
+
+## References
