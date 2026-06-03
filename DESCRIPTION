@@ -11,6 +11,7 @@ Imports:
     flowmapblue,
     fs,
     htmlwidgets,
+    mapgl,
     osmdata,
     sf,
     spanishoddata,

@@ -16,6 +16,9 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages \
     ipykernel \
     plotly
 
+# Install custom mapgl package with flows support
+RUN Rscript -e "install.packages('mapgl', repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org'))"
+
 # Install R package dependencies
 RUN Rscript -e "if (!requireNamespace('pak', quietly = TRUE)) install.packages('pak', repos = 'https://cloud.r-project.org')" \
   && Rscript -e "pak::pak('tdscience/tartu26')"

@@ -10,6 +10,7 @@ This workbook builds on the tutorial "Analysing massive open human mobility data
 #| eval: false
 library(spanishoddata)
 library(flowmapblue)
+library(mapgl)
 library(tidyverse)
 library(sf)
 library(tmap)
@@ -177,6 +178,44 @@ flowmap_seville_interactive <- flowmapblue(
 
 # Display the map
 flowmap_seville_interactive
+```
+
+### Seville flow map using `mapgl`
+
+Alternatively, we can use the `mapgl` package to visualize the flows with high-performance WebGL rendering via the `flowmap.gl` integration. This operates entirely within the browser without external services, and adds an interactive timeline scrubber to explore temporal trends.
+
+```{r}
+#| label: flowmap-seville-mapgl
+#| eval: false
+#| echo: true
+#| code-summary: "Render the Seville flow map using mapgl and MapLibre"
+
+library(mapgl)
+
+# Create the MapLibre map centered on Seville
+seville_mapgl <- maplibre(
+  style = carto_style("dark-matter"),
+  center = c(-5.983, 37.389),
+  zoom = 11,
+  projection = "mercator"
+) |>
+  add_flowmap(
+    id = "seville-flows",
+    locations = locations_seville,
+    flows = flows_seville_time,
+    flow_time_column = "time",
+    flow_color_scheme = "Teal",
+    flow_dark_mode = TRUE
+  ) |>
+  add_time_control(
+    data = flows_seville_time,
+    time_column = "time",
+    time_interval = "hour",
+    title = "Seville OD Flows"
+  )
+
+# Display the map
+seville_mapgl
 ```
 
 ### Northern Spain flow map
