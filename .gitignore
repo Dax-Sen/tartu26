@@ -13,3 +13,6 @@ site_libs/
 *.rds
 *.csv
 data/
+*.parquet
+*.csv
+*.rds
