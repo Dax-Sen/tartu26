@@ -30,7 +30,7 @@ Rather than filtering by a text pattern (as with Seville), we define the study a
 #| eval: false
 #| echo: true
 #| code-summary: "Reproducible example of an interactive flow map for Northern Spain"
-
+spod_set_data_dir('data')
 # Get zones
 zones <- spod_get_zones(zones = "distr", ver = 2)
 valid_dates <- spod_get_valid_dates(2)
@@ -40,7 +40,7 @@ recent_dates = tail(valid_dates, 3)
 # Covers from the coast to south of Pamplona, and from the French border
 # westward to include the Pamplona--Donostia corridor
 bbox_north <- st_bbox(
-  c(xmin = -2.5, ymin = 42.6, xmax = -1.0, ymax = 43.5),
+  c(xmin = -3.1, ymin = 42.8, xmax = -1.0, ymax = 43.4),
   crs = st_crs(4326)
 )
 bbox_sf <- st_as_sfc(bbox_north)
@@ -48,10 +48,12 @@ bbox_sf <- st_as_sfc(bbox_north)
 # Select zones that intersect the bounding box
 sf::sf_use_s2(FALSE)
 zones_wgs84 <- st_transform(zones, 4326)
-zones_north <- zones_wgs84[st_intersects(zones_wgs84, bbox_sf, sparse = FALSE)[, 1], ]
+zones_north <- zones_wgs84 |>
+  st_filter(bbox_sf, .predicate = st_intersects)
 
 # Visualise the selected zones
 plot(st_geometry(zones_north))
+mapview::mapview(zones_north) + mapview::mapview(st_geometry(bbox_sf), color = "red", alpha.regions = 0, lwd = 2)
 
 # Prepare location data (centroids) for the flow map
 locations_north <- zones_north |>
