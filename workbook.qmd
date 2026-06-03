@@ -232,6 +232,10 @@ Our analysis proceeds in five steps:
 4.  **Estimate the border effect** by comparing trip counts at comparable distances: for each distance band, what is the ratio of within-Spain trips to cross-border trips?
 5.  **Visualise** the results as a distance-decay comparison plot.
 
+We'll use a larger area to cover a roughly equal area of Spain and France.
+
+![](images/paste-7.png)
+
 ```{r}
 #| label: cross-border-analysis
 #| eval: false
@@ -242,16 +246,15 @@ Our analysis proceeds in five steps:
 sf::sf_use_s2(FALSE)
 zones <- spod_get_zones(zones = "distr", ver = 2)
 
-# Recreate the Northern Spain study area
+# Recreate larger area covering all the border between Spain and France, then select zones that intersect it:
 bbox_north <- st_bbox(
-  c(xmin = -2.5, ymin = 42.6, xmax = -1.0, ymax = 43.5),
+  c(xmin = -3.1, ymin = 42, xmax = 4, ymax = 43.4),
   crs = st_crs(4326)
 )
 bbox_sf <- st_as_sfc(bbox_north)
 zones_wgs84 <- st_transform(zones, 4326)
-zones_north <- zones_wgs84[
-  st_intersects(zones_wgs84, bbox_sf, sparse = FALSE)[, 1],
-]
+zones_north <- zones_wgs84 |>
+  st_filter(bbox_sf, .predicate = st_intersects)
 
 # Tag each zone by country
 zones_north <- zones_north |>
@@ -260,6 +263,7 @@ zones_north <- zones_north |>
 cat("Zones in study area:", nrow(zones_north), "\n")
 cat("  Spanish:", sum(zones_north$country == "ES"), "\n")
 cat("  French: ", sum(zones_north$country == "FR"), "\n")
+mapview::mapview(zones_north, zcol = "country", legend = TRUE) + mapview::mapview(st_geometry(bbox_sf), color = "red", alpha.regions = 0, lwd = 2)
 
 # ── 2. Get OD data and classify each pair ───────────────────────────
 valid_dates <- spod_get_valid_dates(2)
