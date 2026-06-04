@@ -146,7 +146,9 @@ flowmap_north_interactive <- flowmapblue(
 flowmap_north_interactive
 ```
 
-![](images/paste-5.png)
+The resulting interactive map is shown in @fig-flowmap-blue.
+
+![Interactive flow map of the Pamplona-to-Donostia corridor in Northern Spain, created using the FlowmapBlue library.](images/paste-5.png){#fig-flowmap-blue}
 
 ### Northern Spain flow map using `mapgl`
 
@@ -188,9 +190,9 @@ north_mapgl <- maplibre(
 north_mapgl
 ```
 
-You should see something like this:
+You should see something like this (as shown in @fig-flowmap-mapgl):
 
-![](images/paste-6.png)
+![Spatio-temporal flow map of the Northern Spain corridor rendered using WebGL with the mapgl package.](images/paste-6.png){#fig-flowmap-mapgl}
 
 ```{r}
 #| eval: false
@@ -230,9 +232,9 @@ Our analysis proceeds in five steps:
 4.  **Estimate the border effect** by comparing trip counts at comparable distances: for each distance band, what is the ratio of within-Spain trips to cross-border trips?
 5.  **Visualise** the results as a distance-decay comparison plot.
 
-We'll use a larger area to cover a roughly equal area of Spain and France.
+We'll use a larger area to cover a roughly equal area of Spain and France, as shown in @fig-cross-border-study-area.
 
-![](images/paste-7.png)
+![Geographic bounding box covering the Spain-France border effect study area.](images/paste-7.png){#fig-cross-border-study-area}
 
 ```{r}
 #| label: cross-border-analysis
@@ -329,7 +331,10 @@ dist_comparison <- od_north |>
   collect()
 ```
 
-![](images/hourly_border_flows.png)
+
+The hourly trip volumes are compared in @fig-hourly-border-flows.
+
+![Comparison of hourly trip volumes in the cross-border region, classified by border-crossing status (cross-border, within-Spain, and within-France).](images/hourly_border_flows.png){#fig-hourly-border-flows}
 
 ### Interpretation
 
@@ -346,19 +351,21 @@ dist_comparison <- od_north |>
 
 ## Spatial analysis: Elevation profile and flow correlation
 
-In this section, we analyze the spatial relationship between the physical geography of the region (elevation) and human mobility flows. We define a Southwest-to-Northeast transect line across our study corridor, segment it into 100 equal-length chunks, extract the average elevation for each chunk from a digital elevation model (DEM), and correlate this physical feature with the aggregate travel flows in the corresponding districts.
+In this section, we analyze the spatial relationship between the physical geography of the region (elevation) and human mobility flows.
+We define a Southwest-to-Northeast transect line across our study corridor, segment it into 100 equal-length chunks, extract the average elevation for each chunk from a digital elevation model (DEM), and correlate this physical feature with the aggregate travel flows in the corresponding districts.
 
 ### 1. Download and load elevation data
 
-We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the Northern Spain study area. The file is hosted as a GitHub Release asset for quick and reliable download.
+We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the Northern Spain study area.
+The file is hosted as a GitHub Release asset for quick and reliable download.
 
 ```{r}
 #| label: load-elevation-data
 #| eval: false
 #| echo: true
-if (!file.exists("spain_elevation.tif")) {
-  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_elevation.tif"
-  download.file(release_url, "spain_elevation.tif", mode = "wb")
+if (!file.exists("spain_france_elevation.tif")) {
+  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_france_elevation.tif"
+  download.file(release_url, "spain_france_elevation.tif", mode = "wb")
 }
 
 library(sf)
@@ -368,16 +375,22 @@ library(spanishoddata)
 library(tmap)
 
 elev <- rast("spain_france_elevation.tif")
-mapview::mapview(elev)
+qtm(elev) + tm_layout(main.title = "Elevation raster for Northern Spain study area")
 ```
 
-#### Exercise 
 
-Read the code that download the data and add data for Andorra to avoid the gap in the DEM at the Spain--France border. 
+The loaded DEM is displayed in @fig-elevation-raster-map.
+
+![Digital elevation model (DEM) raster covering the Northern Spain and Southern France study area.](images/paste-8.png){#fig-elevation-raster-map}
+
+#### Exercise
+
+Read the code that download the data and add data for Andorra to avoid the gap in the DEM at the Spain--France border.
 
 ### 2. Segmentize the transect line
 
-We define the transect line from $(-1.8, 43.3)$ to $(1.8, 42.3)$ in WGS84 coordinates to follow the French-Spanish border in a straight line with roughly half of it in each country. To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
+We define the transect line from $(-1.8, 43.3)$ to $(1.8, 42.3)$ in WGS84 coordinates to follow the French-Spanish border in a straight line with roughly half of it in each country.
+To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
 
 ```{r}
 #| label: segmentize-transect
@@ -405,7 +418,8 @@ segments_wgs84 <- st_transform(segments_sf, 4326)
 
 ### 3. Extract elevation and associate with mobility flows
 
-For each chunk, we calculate the average elevation from the DEM. We then identify which district/zone each chunk's centroid falls into and join the total origin trip volume (flow) for that district.
+For each chunk, we calculate the average elevation from the DEM.
+We then identify which district/zone each chunk's centroid falls into and join the total origin trip volume (flow) for that district.
 
 ```{r}
 #| label: extract-elev-and-flows
@@ -449,7 +463,8 @@ cat(paste("Pearson Correlation between Elevation and Flow:", round(cor_val, 4), 
 We plot the elevation raster alongside the study zones and transect line (Map), the elevation profile along the line, and the relationship between elevation and flow.
 
 ```{r}
-#| label: plot-spatial-analysis
+#| label: fig-spatial-analysis
+#| fig-cap: "Spatial relationship between physical geography (elevation) and travel flows."
 #| eval: false
 #| echo: true
 # Define start and end point labels for the map
