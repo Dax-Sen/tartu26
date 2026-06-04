@@ -25,6 +25,12 @@ Whichever option you choose, ensure you have a good handle on the software and d
 
 At a minimum, you should be able to reproduce the figure shown at the end of this document, which is an interactive flow map of Seville using the `spanishoddata` package.
 
+If you're just curious and want to dive in with minimal set-up, click the link below to fire-up a cloud-based environment to run the code:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/tdscience/tartu26?quickstart=1)
+
+For more information, see the detailed cloud setup instructions in @sec-cloud.
+
 
 ## Local Setup {#sec-local}
 
