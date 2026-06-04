@@ -377,14 +377,14 @@ Read the code that download the data and add data for Andorra to avoid the gap i
 
 ### 2. Segmentize the transect line
 
-We define the transect line from $(-3.1, 42.8)$ to $(-1.0, 43.4)$ in WGS84 coordinates. To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
+We define the transect line from $(-1.8, 43.3)$ to $(1.8, 42.3)$ in WGS84 coordinates to follow the French-Spanish border in a straight line with roughly half of it in each country. To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
 
 ```{r}
 #| label: segmentize-transect
 #| eval: false
 #| echo: true
 # Create the transect line in WGS84
-line <- st_linestring(matrix(c(-3.1, -1.0, 42.8, 43.4), ncol = 2)) |>
+line <- st_linestring(matrix(c(-1.8, 1.8, 43.3, 42.3), ncol = 2)) |>
   st_sfc(crs = 4326) |>
   st_sf(geometry = _)
 
@@ -418,7 +418,7 @@ segments_wgs84$elevation <- elev_vals[, 2]
 # Map segments to districts using their centroids
 spod_set_data_dir('data')
 zones <- spod_get_zones(zones = "distr", ver = 2)
-bbox_north <- st_bbox(c(xmin = -3.1, ymin = 42.8, xmax = -1.0, ymax = 43.4), crs = 4326)
+bbox_north <- st_bbox(c(xmin = -3.1, ymin = 42.0, xmax = 4.0, ymax = 43.4), crs = 4326)
 bbox_sf <- st_as_sfc(bbox_north)
 zones_wgs84 <- st_transform(zones, 4326)
 sf_use_s2(FALSE)
@@ -454,8 +454,8 @@ We plot the elevation raster alongside the study zones and transect line (Map), 
 #| echo: true
 # Define start and end point labels for the map
 transect_points <- st_sfc(
-  st_point(c(-3.1, 42.8)),
-  st_point(c(-1.0, 43.4)),
+  st_point(c(-1.8, 43.3)),
+  st_point(c(1.8, 42.3)),
   crs = 4326
 ) |> st_sf(name = c("Start", "End"), geometry = _)
 
@@ -477,7 +477,7 @@ tmap_mode(current_mode)
 
 # B. Plot the elevation profile
 # Calculate distance along the line from the start point (in km)
-start_pt <- st_sfc(st_point(c(-3.1, 42.8)), crs = 4326) |> st_transform(25830)
+start_pt <- st_sfc(st_point(c(-1.8, 43.3)), crs = 4326) |> st_transform(25830)
 segments_final_proj <- st_transform(segments_final, 25830)
 segments_final$dist_km <- as.numeric(st_distance(st_centroid(segments_final_proj), start_pt)) / 1000
 
