@@ -281,6 +281,7 @@ od_north <- flows |>
     id_origin %in% zones_north$id,
     id_destination %in% zones_north$id
   ) |>
+  collect() |>
   left_join(zone_country, by = c("id_origin" = "id")) |>
   rename(country_origin = country) |>
   left_join(zone_country, by = c("id_destination" = "id")) |>
