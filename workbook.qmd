@@ -151,10 +151,29 @@ The resulting interactive map is shown in @fig-flowmap-blue.
 
 ![Interactive flow map of the Pamplona-to-Donostia corridor in Northern Spain, created using the FlowmapBlue library.](images/paste-5.png){#fig-flowmap-blue}
 
-### Northern Spain flow map using `mapgl`
+<details>
+
+<summary>Getting a Mapbox token</summary>
+
+## Setting up Mapbox Access Token
+
+Get a free token from https://account.mapbox.com/access-tokens/
+
+Or, longer term solution: `usethis::edit_r_environ()` Restart R after setting the token for it to take effect
+
+``` r
+Sys.setenv(MAPBOX_TOKEN="YOUR_MAPBOX_ACCESS_TOKEN")
+```
+
+</details>
+
+<details>
+<summary>Bonus exercise: Northern Spain flow map using `mapgl`</summary>
 
 Alternatively, we can use the `mapgl` package to visualize the Northern Spain flows using high-performance WebGL rendering.
 This operates entirely within the browser without requiring a Mapbox account, and adds an interactive timeline scrubber to explore the spatio-temporal trends.
+
+This approach is a bonus exercise and designed to showcase the capabilities of `mapgl` for spatio-temporal flow maps, but it requires a version of the package from the e-kotov R-universe repository that includes the `add_time_control()` function.
 
 ```{r}
 #| label: flowmap-northern-spain-mapgl
@@ -201,20 +220,6 @@ You should see something like this (as shown in @fig-flowmap-mapgl):
 
 # Save the map as an HTML file
 htmlwidgets::saveWidget(flowmap_north_interactive, "north_spain_flowmap.html")
-```
-
-<details>
-
-<summary>Getting a Mapbox token</summary>
-
-## Setting up Mapbox Access Token
-
-Get a free token from https://account.mapbox.com/access-tokens/
-
-Or, longer term solution: `usethis::edit_r_environ()` Restart R after setting the token for it to take effect
-
-``` r
-Sys.setenv(MAPBOX_TOKEN="YOUR_MAPBOX_ACCESS_TOKEN")
 ```
 
 </details>
