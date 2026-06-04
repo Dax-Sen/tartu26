@@ -316,7 +316,7 @@ ggplot(hourly_by_border, aes(x = hour, y = total_trips, colour = border_crossing
     colour = "Flow type"
   ) +
   theme_minimal()
-
+ggsave("images/hourly_border_flows.png", width = 8, height = 5)
 # ── 4. Distance-decay comparison ───────────────────────────────────
 # Compare within-Spain vs cross-border flows at similar distances
 dist_comparison <- od_north |>
@@ -368,6 +368,8 @@ cat(sprintf("Cross-border trips: %s (%.1f%% of all trips)\n",
   100 * total_cross / (total_cross + total_spain)
 ))
 ```
+
+![](images/hourly_border_flows.png)
 
 ### Interpretation
 
