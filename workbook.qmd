@@ -114,10 +114,10 @@ elev_fra <- elevation_30s(country = "FRA", path = tempdir())
 elev_merged <- merge(elev_esp, elev_fra)
 study_area_ext <- ext(-3.6, 4.2, 41.8, 44.0)
 elev_cropped <- crop(elev_merged, study_area_ext)
-writeRaster(elev_cropped, "spain_elevation.tif", overwrite = TRUE)
+writeRaster(elev_cropped, "spain_france_elevation.tif", overwrite = TRUE)
 
 system("gh release list")
-system("gh release upload v1 flows_north_time.parquet locations_north.parquet flows_north_time.rds locations_north.rds spain_elevation.tif --clobber")
+system("gh release upload v1 flows_north_time.parquet locations_north.parquet flows_north_time.rds locations_north.rds spain_france_elevation.tif --clobber")
 ```
 
 </details>
@@ -407,9 +407,9 @@ We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the N
 #| label: load-elevation-data
 #| eval: false
 #| echo: true
-if (!file.exists("spain_elevation.tif")) {
-  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_elevation.tif"
-  download.file(release_url, "spain_elevation.tif", mode = "wb")
+if (!file.exists("spain_france_elevation.tif")) {
+  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_france_elevation.tif"
+  download.file(release_url, "spain_france_elevation.tif", mode = "wb")
 }
 
 library(sf)
@@ -418,7 +418,7 @@ library(tidyverse)
 library(spanishoddata)
 library(tmap)
 
-elev <- rast("spain_elevation.tif")
+elev <- rast("spain_france_elevation.tif")
 ```
 
 ### 2. Segmentize the transect line
