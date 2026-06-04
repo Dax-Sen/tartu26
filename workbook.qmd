@@ -1,5 +1,6 @@
 ---
 title: "Spatio-temporal data with OD data"
+number-sections: true
 ---
 
 ## Install the required packages
@@ -331,7 +332,6 @@ dist_comparison <- od_north |>
   collect()
 ```
 
-
 The hourly trip volumes are compared in @fig-hourly-border-flows.
 
 ![Comparison of hourly trip volumes in the cross-border region, classified by border-crossing status (cross-border, within-Spain, and within-France).](images/hourly_border_flows.png){#fig-hourly-border-flows}
@@ -354,7 +354,7 @@ The hourly trip volumes are compared in @fig-hourly-border-flows.
 In this section, we analyze the spatial relationship between the physical geography of the region (elevation) and human mobility flows.
 We define a Southwest-to-Northeast transect line across our study corridor, segment it into 100 equal-length chunks, extract the average elevation for each chunk from a digital elevation model (DEM), and correlate this physical feature with the aggregate travel flows in the corresponding districts.
 
-### 1. Download and load elevation data
+### Download and load elevation data
 
 We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the Northern Spain study area.
 The file is hosted as a GitHub Release asset for quick and reliable download.
@@ -378,7 +378,6 @@ elev <- rast("spain_france_elevation.tif")
 qtm(elev) + tm_layout(main.title = "Elevation raster for Northern Spain study area")
 ```
 
-
 The loaded DEM is displayed in @fig-elevation-raster-map.
 
 ![Digital elevation model (DEM) raster covering the Northern Spain and Southern France study area.](images/paste-8.png){#fig-elevation-raster-map}
@@ -387,7 +386,7 @@ The loaded DEM is displayed in @fig-elevation-raster-map.
 
 Read the code that download the data and add data for Andorra to avoid the gap in the DEM at the Spain--France border.
 
-### 2. Segmentize the transect line
+### Segmentize the transect line
 
 We define the transect line from $(-1.8, 43.3)$ to $(1.8, 42.3)$ in WGS84 coordinates to follow the French-Spanish border in a straight line with roughly half of it in each country.
 To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
@@ -416,7 +415,7 @@ segments_sf <- st_sfc(segments, crs = 25830) |> st_sf(segment_id = 1:100, geomet
 segments_wgs84 <- st_transform(segments_sf, 4326)
 ```
 
-### 3. Extract elevation and associate with mobility flows
+### Extract elevation and associate with mobility flows
 
 For each chunk, we calculate the average elevation from the DEM.
 We then identify which district/zone each chunk's centroid falls into and join the total origin trip volume (flow) for that district.
@@ -458,7 +457,7 @@ cor_val <- cor(segments_final$elevation, segments_final$total_flow, use = "compl
 cat(paste("Pearson Correlation between Elevation and Flow:", round(cor_val, 4), "\n"))
 ```
 
-### 4. Visualization
+### Visualization
 
 We plot the elevation raster alongside the study zones and transect line (Map), the elevation profile along the line, and the relationship between elevation and flow.
 
