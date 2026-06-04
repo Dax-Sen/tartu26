@@ -105,19 +105,8 @@ object.size(flows_north_time) |> print(units = "Mb")
 # We'll also save the datasets as .rds files for people who don't have arrow:
 saveRDS(flows_north_time, "flows_north_time.rds")
 saveRDS(locations_north, "locations_north.rds")
-
-# Download and crop cross-border elevation data for Spain and France
-library(geodata)
-library(terra)
-elev_esp <- elevation_30s(country = "ESP", path = tempdir())
-elev_fra <- elevation_30s(country = "FRA", path = tempdir())
-elev_merged <- merge(elev_esp, elev_fra)
-study_area_ext <- ext(-3.6, 4.2, 41.8, 44.0)
-elev_cropped <- crop(elev_merged, study_area_ext)
-writeRaster(elev_cropped, "spain_france_elevation.tif", overwrite = TRUE)
-
 system("gh release list")
-system("gh release upload v1 flows_north_time.parquet locations_north.parquet flows_north_time.rds locations_north.rds spain_france_elevation.tif --clobber")
+system("gh release upload v1 flows_north_time.parquet locations_north.parquet flows_north_time.rds locations_north.rds --clobber")
 ```
 
 </details>
@@ -331,53 +320,13 @@ ggsave("images/hourly_border_flows.png", width = 8, height = 5)
 # ── 4. Distance-decay comparison ───────────────────────────────────
 # Compare within-Spain vs cross-border flows at similar distances
 dist_comparison <- od_north |>
-  filter(distance > 0, distance < 100) |>    # exclude intra-zonal (d=0) and extreme
-  mutate(dist_band = cut(distance, breaks = seq(0, 100, by = 10))) |>
-  group_by(dist_band, border_crossing) |>
+  group_by(distance, border_crossing) |>
   summarise(
     total_trips = sum(n_trips, na.rm = TRUE),
     n_pairs     = n(),
     .groups     = "drop"
   ) |>
   collect()
-
-# Calculate the border deterrence ratio
-border_ratio <- dist_comparison |>
-  filter(border_crossing %in% c("within-Spain", "cross-border")) |>
-  tidyr::pivot_wider(
-    id_cols     = dist_band,
-    names_from  = border_crossing,
-    values_from = total_trips,
-    values_fill = 0
-  ) |>
-  mutate(
-    deterrence_ratio = `within-Spain` / (`cross-border` + 1),  # +1 avoids Inf
-    deterrence_label = paste0(round(deterrence_ratio, 1), "×")
-  )
-
-ggplot(border_ratio, aes(x = dist_band, y = deterrence_ratio)) +
-  geom_col(fill = "steelblue", alpha = 0.7) +
-  geom_text(aes(label = deterrence_label), vjust = -0.3, size = 3) +
-  labs(
-    title = "Border deterrence effect by distance band",
-    subtitle = "Ratio of within-Spain to cross-border trips (>1 = border deters travel)",
-    x = "Distance band (km)",
-    y = "Within-Spain / Cross-border trip ratio"
-  ) +
-  theme_minimal()
-
-# ── 5. Summary statistics ──────────────────────────────────────────
-cat("\n=== Summary: Border effect ===\n")
-total_cross <- sum(hourly_by_border$total_trips[
-  hourly_by_border$border_crossing == "cross-border"
-])
-total_spain <- sum(hourly_by_border$total_trips[
-  hourly_by_border$border_crossing == "within-Spain"
-])
-cat(sprintf("Cross-border trips: %s (%.1f%% of all trips)\n",
-  scales::comma(total_cross),
-  100 * total_cross / (total_cross + total_spain)
-))
 ```
 
 ![](images/hourly_border_flows.png)
@@ -407,9 +356,9 @@ We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the N
 #| label: load-elevation-data
 #| eval: false
 #| echo: true
-if (!file.exists("spain_france_elevation.tif")) {
-  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_france_elevation.tif"
-  download.file(release_url, "spain_france_elevation.tif", mode = "wb")
+if (!file.exists("spain_elevation.tif")) {
+  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_elevation.tif"
+  download.file(release_url, "spain_elevation.tif", mode = "wb")
 }
 
 library(sf)
@@ -419,7 +368,12 @@ library(spanishoddata)
 library(tmap)
 
 elev <- rast("spain_france_elevation.tif")
+mapview::mapview(elev)
 ```
+
+#### Exercise 
+
+Read the code that download the data and add data for Andorra to avoid the gap in the DEM at the Spain--France border. 
 
 ### 2. Segmentize the transect line
 
