@@ -25,6 +25,8 @@ website:
         text: Prerequisites
       - href: workbook.qmd
         text: Workbook
+      - href: slides.qmd
+        text: Slides
       - href: https://github.com/tdscience/tartu26
         text: Source code
 

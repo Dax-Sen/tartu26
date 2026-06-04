@@ -1,0 +1,42 @@
+---
+title: "Transport Data Science"
+subtitle: "From origin-destination to route network datasets"
+format:
+  revealjs:
+    theme: league
+    slide-number: true
+    show-slide-number: all
+    hash-type: number
+    preview-links: auto
+---
+
+## Delivery Team
+
+- **Robin Lovelace**  
+  *Associate Professor of Transport Data Science, University of Leeds*
+- **Egor Kotov**  
+  *Postdoctoral Researcher, developer of `spanishoddata` & `mapgl`*
+
+## Agenda
+
+### Day 1: Sunday, June 7
+- **14:00–18:00** – Practical Workshop Session 1 (with coffee break)
+  - Finding and importing data
+  - Origin-destination analysis
+  - Visualisation
+
+---
+
+## Agenda (continued)
+
+### Day 2: Monday, June 8
+- **09:00–12:30** – Practical Workshop Session 2
+  - Spatio-temporal data
+  - Routing and route networks
+  - Advanced topics
+- **12:30–13:30** – Lunch & Workshop Wrap-up
+
+## Key Links
+
+- **GitHub Repository**: [github.com/tdscience/tartu26](https://github.com/tdscience/tartu26)
+- **Workshop Website**: [tdscience.github.io/tartu26](https://tdscience.github.io/tartu26/)
