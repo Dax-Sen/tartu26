@@ -11,134 +11,19 @@ If you have any issues completing the prerequisites, please get in touch on [git
 
 There are two main ways to run the workshop materials:
 
-1.  **Cloud-based setup** using GitHub Codespaces, Posit Cloud, or similar services (see @sec-cloud).
-2.  **Local setup** on your computer (see @sec-local).
+1.  **Local setup** on your computer (recommended, see @sec-local).
+2.  **Cloud-based setup** using GitHub Codespaces, Posit Cloud, or similar services (as a backup if you cannot get the software installed locally, see @sec-cloud).
 
 Within each approach, there are various options for software and data setup.
 
 Which to use?
-It depends:
 
--   If you want the fastest and easiest way to get started, the cloud-based option is recommended.
--   If you prefer to work on your own machine, want to learn about installing and setting-up software for future use, and have a decent laptop that you have admin rights for, the local setup is a good option.
+-   We recommend the local setup on your own machine so you can run the code directly, learn how to manage the required software, and have everything configured for future use.
+-   If you run into issues installing the software locally, do not have admin rights to install tools like Docker, or have a machine with limited hardware resources, the cloud-based GitHub Codespaces option serves as an excellent, pre-configured backup that runs entirely in your browser.
 
-If in doubt, start with the cloud-based option to get going quickly, and then explore the local setup if you want to learn more about the software and data management aspects.
 Whichever option you choose, ensure you have a good handle on the software and data setup before the workshop to make the most of the session.
 
-At a minimum, you should be able to reproduce the figure show at the end of this document, which is an interactive flow map of Seville using the `spanishoddata` package.
-
-## Cloud Setup {#sec-cloud}
-
-For the cloud-based option, you can run the workshop environment entirely in your web browser.
-This is the fastest and easiest way to get started.
-
-### GitHub {#sec-github}
-
-To use GitHub Codespaces or access repository resources, you must have a GitHub account.
-Go to [GitHub](https://github.com) and sign-up if you haven't already done so.
-
-::: callout-tip
-### 🎓 GitHub Academic Benefits (Free GitHub Pro & Copilot)
-
-If you are a student, researcher, or teacher at an accredited academic institution, you can sign up for the **[GitHub Global Campus](https://education.github.com/)** program to get free premium benefits:
-
-- **GitHub Pro**: Upgraded account limits, including more **GitHub Codespaces** hours and storage (ideal for running data-intensive environments like this workshop).
-- **GitHub Copilot**: Free access to GitHub's AI developer tool to write code, debug, and learn faster.
-- **Developer Packs**: Free access to top-tier developer tools, cloud hosting credits, and subscriptions.
-
-You can apply with your academic email address or school ID at **[education.github.com](https://education.github.com/)**.
-:::
-
-After you have a GitHub account, you can launch the workspace in GitHub Codespaces by clicking the badge below.
-**Note: it takes around 5 minutes to set up the Codespace environment, so be patient, read-up on some of the links in this website, or get a coffee!**
-
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/tdscience/tartu26?quickstart=1)
-
-When you click on that button, assuming you're signed in and do not have any existing codespaces associated with the repo already running, you should see a page with default settings for the codespace.
-You can leave them all as is **except for machine type**.
-
-We will be handling a lot of data so **select the 4-core option**.
-This gives you 16 GB RAM on a machine with 60 hours of [free use per month](https://docs.github.com/en/billing/concepts/product-billing/github-codespaces#free-quota).
-That should be plenty for processing the datasets we'll using in this tutorial.
-Go for a larger option if you want to import larger datasets but be warned that your compute credits will burn down quicker the larger the machine you're on, as described in the [GitHub Codespaces pricing docs](https://docs.github.com/en/billing/concepts/product-billing/github-codespaces).
-
-![](images/paste-3.png)
-
-<details>
-
-<summary>About GitHub</summary>
-
-While you wait for that to load, it's worth learning a bit about what GitHub is: it's the world's number one platform for hosting and collaborating on code, especially for international and open-source projects, although you can easily host 'private repos' also, allowing you to choose who can see and collaborate on your work.
-Key concepts in GitHub include:
-
--   Repositories, also called repos. These are like folders for your projects, where you can store code, data, and documentation. The workshop materials are hosted in a GitHub repository. See the [GitHub repository for the workshop at github.com/tdscience/tartu26](https://github.com/tdscience/tartu26) for more details.
--   Issues. These are like to-do lists or bug trackers for your code. You can use them to keep track of tasks, bugs, or feature requests for your projects. See the [Issues tab in the workshop repository](https://github.com/tdscience/tartu26/issues) and open a test issue if you want to practice, it's a great way to communicate, learn, get feedback and collaborate with others.
--   Pull requests. These are like proposals for changes to your code. You can use them to suggest changes, review code, and merge changes into your projects. See the [Pull Requests tab in the workshop repository](https://github.com/tdscience/tartu26/pulls) for more details. Bonus: open a PR making a change to the README file, it's a great way to practice and learn about how PRs work (see the [GitHub documentation on pull requests](https://docs.github.com/en/pull-requests) for more details).
--   Commits. These are like snapshots of your code at a given point in time.
--   Branches. These are like different versions of your code that you can work on separately and then merge together.
-
-You can run the code in any GitHub repo in Codespaces by clicking on the green "Code" button and selecting "Open with Codespaces", as described in the [GitHub documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) and shown below.
-Try to see the options in the green "Code" button for the [workshop repository](https://github.com/tdscience/tartu26), and try cloning locally or downloading the zip file to see the different options available as a bonus.
-The "Codespaces" option is the one to launch the cloud-based environment for the workshop, while the "Download ZIP" option allows you to download the repository files to your local machine without using Git.
-
-![](https://docs.github.com/assets/cb-60499/mw-1440/images/help/repository/https-url-clone-cli.webp){width="50%"}
-
-The "Local" clone --- with HTTPS, ssh or GitHub CLI options --- are for cloning the repository to your local machine, which is not required if you are using Codespaces, but may be useful if you want to work on the materials locally, as described in @sec-local.
-
-</details>
-
-After the Codespace has finished 'spinning-up', you will see something like this:
-
-![A successfully loaded GitHub Codespaces session for this repository, with the file explorer on the left, a README preview in the editor, and a ready-to-use terminal at the bottom.](images/paste-1.png)
-
-There are a few things worth noting about the Codespace environment shown above:
-
-1.  The repository files are visible in the Explorer pane on the left (including `.devcontainer`, Quarto files, and workshop documents), confirming that the workspace has loaded correctly.
-2.  The editor opens files directly in the browser-based VS Code interface. In the screenshot, `README.md` is shown in preview mode.
-3.  The integrated terminal at the bottom is ready to run commands in the project directory (`/workspaces/tartu26`). This is where you can run workshop code and render Quarto documents.
-4.  If your environment took around 5 minutes to start, this is expected for first launch: once loaded, you can proceed with the exercises normally.
-5.  You have a unique Codespace URL (e.g. `https://tdscience-tartu26-abc123-xyz456.codespaces.github.com`) that you can bookmark and return to later, and share with others if you want to collaborate.
-
-From that point, you're almost ready to start writing and running code for the workshop!
-It's worth being aware of a few different ways to run code interactively in the Codespace environment.
-
-::: callout
-Ways to run code in GitHub Codespaces:
-
-1.  **Terminal**: You can run any command-line code directly in the integrated terminal.
-    This is useful for running scripts, installing packages, or executing commands that don't require an interactive environment. To initiate an R session, simply type `R` in the terminal and press Enter. For Python, type `python` and press Enter.
-
-<!-- TODO: add screenshots -->
-
-2.  **Quarto Documents (recommended)**: You can open existing or new `.qmd` files in the editor and run code in the chunks interactively by typing Ctrl+Enter (or Cmd+Enter on Mac) to run the code line-by-line or even selected parts of code.
-    You can also use the "Run" buttons that appear when you hover over code chunks.
-    This allows you to execute code and see results inline, which is great for learning and experimentation.
-
-<!-- TODO: screenshot, necessary? -->
-
-3.  **Jupyter Notebooks**: If you are familiar with Jupyter notebooks, these can be used in the same way as Quarto documents, allowing you to run code interactively and see results inline.
-
-4.  **`quarto render` and `quarto preview`**: For rendering the entire Quarto site, you can use the terminal to run `quarto preview` to generate dynamic outputs (e.g. HTML), or `quarto preview <filename.qmd>` to render and open a live preview in the browser.
-:::
-
-To check that the code runs for this tutorial, open the `demo.qmd` file in the editor and run the code chunks interactively using Ctrl+Enter (or Cmd+Enter on Mac) to execute the code line-by-line.
-
-If it worked it should look something like this: 
-
-![](images/paste-2.png)
-
-Congratulations if so, you have completed the prerequisites for the workshop and are ready to start learning about transport data science with R and Python!
-
-You can also get the same 'devcontainer' environment shown in the image above running locally on your machine using VS Code and the Remote Containers extension.
-This requires you to have Docker installed and running on your machine, and may require admin rights to set up (see @sec-local-docker for more details on local setup).
-
-<details>
-<summary>Other cloud-based environments</summary>
-
-Other cloud services are available. 
-One that is well-suited for data science is Posit Cloud, but unfortunately has a [maximum session RAM use of only 1GB](https://posit.cloud/plans), which is not enough for the datasets we'll be using in this workshop.
-For these cloud services, you may still need to install the required packages the first time you launch a new session (see the [R Packages section](#sec-packages)).
-</details>
+At a minimum, you should be able to reproduce the figure shown at the end of this document, which is an interactive flow map of Seville using the `spanishoddata` package.
 
 
 ## Local Setup {#sec-local}
@@ -158,7 +43,7 @@ gh repo clone tdscience/tartu26
 <details>
 <summary>Click to view setup steps</summary>
 
-This is the most reliable way to ensure a consistent environment. The repository includes a pre-configured `.devcontainer` that sets up all dependencies (R, Python, Quarto, VS Code extensions) inside an isolated container.
+This is the most reliable way to ensure a consistent environment. The repository includes a pre-configured `.devcontainer` that sets up all dependencies (R, Python, Quarto, VS Code extensions) inside an isolated container (the same environment used in the cloud-based backup option).
 
 To use this option:
 
@@ -271,6 +156,117 @@ See the [releases page](https://github.com/tdscience/tartu26/releases) for links
 You are welcome to bring your own origin-destination and network data if you wish to follow along and implement the concepts with your own datasets.
 There will be less support for custom datasets.
 You are encouraged to experiment with your own data after the workshop, and have fun!
+
+
+## Cloud Setup (Backup Option) {#sec-cloud}
+
+If you cannot install the required software locally on your computer, the cloud-based option allows you to run the complete workshop environment entirely in your web browser using GitHub Codespaces.
+
+### GitHub {#sec-github}
+
+To use GitHub Codespaces or access repository resources, you must have a GitHub account.
+Go to [GitHub](https://github.com) and sign-up if you haven't already done so.
+
+::: callout-tip
+### 🎓 GitHub Academic Benefits (Free GitHub Pro & Copilot)
+
+If you are a student, researcher, or teacher at an accredited academic institution, you can sign up for the **[GitHub Global Campus](https://education.github.com/)** program to get free premium benefits:
+
+- **GitHub Pro**: Upgraded account limits, including more **GitHub Codespaces** hours and storage (ideal for running data-intensive environments like this workshop).
+- **GitHub Copilot**: Free access to GitHub's AI developer tool to write code, debug, and learn faster.
+- **Developer Packs**: Free access to top-tier developer tools, cloud hosting credits, and subscriptions.
+
+You can apply with your academic email address or school ID at **[education.github.com](https://education.github.com/)**.
+:::
+
+After you have a GitHub account, you can launch the workspace in GitHub Codespaces by clicking the badge below.
+**Note: it takes around 5 minutes to set up the Codespace environment, so be patient, read-up on some of the links in this website, or get a coffee!**
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/tdscience/tartu26?quickstart=1)
+
+When you click on that button, assuming you're signed in and do not have any existing codespaces associated with the repo already running, you should see a page with default settings for the codespace.
+You can leave them all as is **except for machine type**.
+
+We will be handling a lot of data so **select the 4-core option**.
+This gives you 16 GB RAM on a machine with 60 hours of [free use per month](https://docs.github.com/en/billing/concepts/product-billing/github-codespaces#free-quota).
+That should be plenty for processing the datasets we'll using in this tutorial.
+Go for a larger option if you want to import larger datasets but be warned that your compute credits will burn down quicker the larger the machine you're on, as described in the [GitHub Codespaces pricing docs](https://docs.github.com/en/billing/concepts/product-billing/github-codespaces).
+
+![](images/paste-3.png)
+
+<details>
+
+<summary>About GitHub</summary>
+
+While you wait for that to load, it's worth learning a bit about what GitHub is: it's the world's number one platform for hosting and collaborating on code, especially for international and open-source projects, although you can easily host 'private repos' also, allowing you to choose who can see and collaborate on your work.
+Key concepts in GitHub include:
+
+-   Repositories, also called repos. These are like folders for your projects, where you can store code, data, and documentation. The workshop materials are hosted in a GitHub repository. See the [GitHub repository for the workshop at github.com/tdscience/tartu26](https://github.com/tdscience/tartu26) for more details.
+-   Issues. These are like to-do lists or bug trackers for your code. You can use them to keep track of tasks, bugs, or feature requests for your projects. See the [Issues tab in the workshop repository](https://github.com/tdscience/tartu26/issues) and open a test issue if you want to practice, it's a great way to communicate, learn, get feedback and collaborate with others.
+-   Pull requests. These are like proposals for changes to your code. You can use them to suggest changes, review code, and merge changes into your projects. See the [Pull Requests tab in the workshop repository](https://github.com/tdscience/tartu26/pulls) for more details. Bonus: open a PR making a change to the README file, it's a great way to practice and learn about how PRs work (see the [GitHub documentation on pull requests](https://docs.github.com/en/pull-requests) for more details).
+-   Commits. These are like snapshots of your code at a given point in time.
+-   Branches. These are like different versions of your code that you can work on separately and then merge together.
+
+You can run the code in any GitHub repo in Codespaces by clicking on the green "Code" button and selecting "Open with Codespaces", as described in the [GitHub documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) and shown below.
+Try to see the options in the green "Code" button for the [workshop repository](https://github.com/tdscience/tartu26), and try cloning locally or downloading the zip file to see the different options available as a bonus.
+The "Codespaces" option is the one to launch the cloud-based environment for the workshop, while the "Download ZIP" option allows you to download the repository files to your local machine without using Git.
+
+![](https://docs.github.com/assets/cb-60499/mw-1440/images/help/repository/https-url-clone-cli.webp){width="50%"}
+
+The "Local" clone --- with HTTPS, ssh or GitHub CLI options --- are for cloning the repository to your local machine, which is not required if you are using Codespaces, but may be useful if you want to work on the materials locally, as described in @sec-local.
+
+</details>
+
+After the Codespace has finished 'spinning-up', you will see something like this:
+
+![A successfully loaded GitHub Codespaces session for this repository, with the file explorer on the left, a README preview in the editor, and a ready-to-use terminal at the bottom.](images/paste-1.png)
+
+There are a few things worth noting about the Codespace environment shown above:
+
+1.  The repository files are visible in the Explorer pane on the left (including `.devcontainer`, Quarto files, and workshop documents), confirming that the workspace has loaded correctly.
+2.  The editor opens files directly in the browser-based VS Code interface. In the screenshot, `README.md` is shown in preview mode.
+3.  The integrated terminal at the bottom is ready to run commands in the project directory (`/workspaces/tartu26`). This is where you can run workshop code and render Quarto documents.
+4.  If your environment took around 5 minutes to start, this is expected for first launch: once loaded, you can proceed with the exercises normally.
+5.  You have a unique Codespace URL (e.g. `https://tdscience-tartu26-abc123-xyz456.codespaces.github.com`) that you can bookmark and return to later, and share with others if you want to collaborate.
+
+From that point, you're almost ready to start writing and running code for the workshop!
+It's worth being aware of a few different ways to run code interactively in the Codespace environment.
+
+::: callout
+Ways to run code in GitHub Codespaces:
+
+1.  **Terminal**: You can run any command-line code directly in the integrated terminal.
+    This is useful for running scripts, installing packages, or executing commands that don't require an interactive environment. To initiate an R session, simply type `R` in the terminal and press Enter. For Python, type `python` and press Enter.
+
+<!-- TODO: add screenshots -->
+
+2.  **Quarto Documents (recommended)**: You can open existing or new `.qmd` files in the editor and run code in the chunks interactively by typing Ctrl+Enter (or Cmd+Enter on Mac) to run the code line-by-line or even selected parts of code.
+    You can also use the "Run" buttons that appear when you hover over code chunks.
+    This allows you to execute code and see results inline, which is great for learning and experimentation.
+
+<!-- TODO: screenshot, necessary? -->
+
+3.  **Jupyter Notebooks**: If you are familiar with Jupyter notebooks, these can be used in the same way as Quarto documents, allowing you to run code interactively and see results inline.
+
+4.  **`quarto render` and `quarto preview`**: For rendering the entire Quarto site, you can use the terminal to run `quarto preview` to generate dynamic outputs (e.g. HTML), or `quarto preview <filename.qmd>` to render and open a live preview in the browser.
+:::
+
+To check that the code runs for this tutorial, open the `demo.qmd` file in the editor and run the code chunks interactively using Ctrl+Enter (or Cmd+Enter on Mac) to execute the code line-by-line.
+
+If it worked it should look something like this:
+
+![](images/paste-2.png)
+
+Congratulations if so, you have completed the prerequisites for the workshop and are ready to start learning about transport data science with R and Python!
+
+<details>
+<summary>Other cloud-based environments</summary>
+
+Other cloud services are available. 
+One that is well-suited for data science is Posit Cloud, but unfortunately has a [maximum session RAM use of only 1GB](https://posit.cloud/plans), which is not enough for the datasets we'll be using in this workshop.
+For these cloud services, you may still need to install the required packages the first time you launch a new session (see the [R Packages section](#sec-packages)).
+</details>
+
 
 ## The outcome: an interactive flow map of Seville
 
