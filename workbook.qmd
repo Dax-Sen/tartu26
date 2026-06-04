@@ -105,8 +105,19 @@ object.size(flows_north_time) |> print(units = "Mb")
 # We'll also save the datasets as .rds files for people who don't have arrow:
 saveRDS(flows_north_time, "flows_north_time.rds")
 saveRDS(locations_north, "locations_north.rds")
+
+# Download and crop cross-border elevation data for Spain and France
+library(geodata)
+library(terra)
+elev_esp <- elevation_30s(country = "ESP", path = tempdir())
+elev_fra <- elevation_30s(country = "FRA", path = tempdir())
+elev_merged <- merge(elev_esp, elev_fra)
+study_area_ext <- ext(-3.6, 4.2, 41.8, 44.0)
+elev_cropped <- crop(elev_merged, study_area_ext)
+writeRaster(elev_cropped, "spain_elevation.tif", overwrite = TRUE)
+
 system("gh release list")
-system("gh release upload v1 flows_north_time.parquet locations_north.parquet flows_north_time.rds locations_north.rds --clobber")
+system("gh release upload v1 flows_north_time.parquet locations_north.parquet flows_north_time.rds locations_north.rds spain_elevation.tif --clobber")
 ```
 
 </details>
