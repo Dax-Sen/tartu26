@@ -158,7 +158,8 @@ This operates entirely within the browser without requiring a Mapbox account, an
 #| eval: false
 #| echo: true
 #| code-summary: "Render the Northern Spain flow map using mapgl and MapLibre"
-
+# Note: this code block requires a version of the mapgl package from the e-kotov R-universe repository, which includes the add_time_control() function for spatio-temporal flow maps.
+install.packages('mapgl', repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org'))
 library(mapgl)
 
 # Create the MapLibre map centered on the Northern Spain corridor
