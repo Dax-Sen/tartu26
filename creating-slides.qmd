@@ -1,0 +1,15 @@
+---
+title: "Creating Slides"
+---
+
+## Slide Presentation Guidelines
+
+Each group in the workshop is expected to create a short set of slides for their final presentation. Collaborative work is highly encouraged—one or (ideally) more members from each team can contribute to the slides.
+
+### Tools for Creating Slides
+- You are welcome to use **any tools you like** (such as PowerPoint, Google Slides, etc.) to make your slides.
+- Alternatively, we have created a **RevealJS template and a placeholder page** for each group in this repository. 
+- If you use the provided templates (`group1.qmd`, `group2.qmd`, etc.) in this repository, your slides will **automatically compile and update live on the website** as soon as your team commits and pushes changes to GitHub!
+
+### How to use Quarto/RevealJS Templates
+The slide files are written in Quarto markdown format. For a detailed guide on options, layouts, and features, visit the official **[Quarto Presentations Documentation](https://quarto.org/docs/presentations/)**.

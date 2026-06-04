@@ -27,6 +27,18 @@ website:
         text: Workbook
       - href: slides.qmd
         text: Slides
+      - section: "Group Presentations"
+        contents:
+          - href: creating-slides.qmd
+            text: Guidelines
+          - href: group1.qmd
+            text: Group 1
+          - href: group2.qmd
+            text: Group 2
+          - href: group3.qmd
+            text: Group 3
+          - href: group4.qmd
+            text: Group 4
       - href: https://github.com/tdscience/tartu26
         text: Source code
 
