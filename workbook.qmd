@@ -556,6 +556,30 @@ They range from descriptive to analytical and are designed to be tractable withi
     Which city has higher average trip distances?
     Which shows more polycentric flow patterns (multiple distinct centres rather than a single dominant hub)?
 
+## Bonus Exercise: Contributing via Pull Request
+
+A key skill in collaborative data science is contributing improvements, fixes, or new examples to open-source project repositories using Git and GitHub.
+
+In this bonus exercise, you will create a **Pull Request (PR)** to this repository:
+
+1. **Find something to improve**: This could be correcting a typo in the documentation, adding a comment to clarify a complex code block, or contributing a new research question/exercise.
+2. **Create a branch**: In your local terminal or Codespace, create a new branch:
+   ```bash
+   git checkout -b my-improvement-branch
+   ```
+3. **Commit your changes**: Stage and commit your changes:
+   ```bash
+   git add .
+   git commit -m "docs: Fix typo in workbook"
+   ```
+4. **Push and Open a Pull Request**: Push your branch to GitHub and open a Pull Request.
+
+For a detailed step-by-step walkthrough, check out the following official guides:
+
+- **[GitHub Flow Guide](https://docs.github.com/en/get-started/using-git/about-git#github-flow)**: An introduction to branching, committing, and opening PRs.
+- **[Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)**: The official GitHub guide on how to propose changes.
+- **[Forking a repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)**: If you do not have direct push access, learn how to fork, make changes, and open a PR back to the main repository.
+
 ## Further resources
 
 This workbook builds on the tutorial "Analysing massive open human mobility data in R using spanishoddata, duckdb and flowmaps" [@kotovAGIT2025Workshop2025], and the spatio-temporal data [session](https://tdscience.github.io/dstp/s4.html) in the [Data Science for Transport Planning course](https://tdscience.github.io/dstp/).
