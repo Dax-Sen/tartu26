@@ -381,6 +381,164 @@ cat(sprintf("Cross-border trips: %s (%.1f%% of all trips)\n",
 -   Expand the study area westward to include **Bilbao** and compare the border effect at Irun/Hendaye (major crossing) versus more remote Pyrenean crossings.
 -   Download a **full month** of data and examine how the border effect changes on public holidays and during school vacations.
 
+## Spatial analysis: Elevation profile and flow correlation
+
+In this section, we analyze the spatial relationship between the physical geography of the region (elevation) and human mobility flows. We define a Southwest-to-Northeast transect line across our study corridor, segment it into 100 equal-length chunks, extract the average elevation for each chunk from a digital elevation model (DEM), and correlate this physical feature with the aggregate travel flows in the corresponding districts.
+
+### 1. Download and load elevation data
+
+We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the Northern Spain study area. The file is hosted as a GitHub Release asset for quick and reliable download.
+
+```{r}
+#| label: load-elevation-data
+#| eval: false
+#| echo: true
+if (!file.exists("spain_elevation.tif")) {
+  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_elevation.tif"
+  download.file(release_url, "spain_elevation.tif", mode = "wb")
+}
+
+library(sf)
+library(terra)
+library(tidyverse)
+library(spanishoddata)
+library(tmap)
+
+elev <- rast("spain_elevation.tif")
+```
+
+### 2. Segmentize the transect line
+
+We define the transect line from $(-3.1, 42.8)$ to $(-1.0, 43.4)$ in WGS84 coordinates. To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
+
+```{r}
+#| label: segmentize-transect
+#| eval: false
+#| echo: true
+# Create the transect line in WGS84
+line <- st_linestring(matrix(c(-3.1, -1.0, 42.8, 43.4), ncol = 2)) |>
+  st_sfc(crs = 4326) |>
+  st_sf(geometry = _)
+
+# Project to UTM 30N for equal-length segmentation
+line_proj <- st_transform(line, 25830)
+pts <- st_line_sample(line_proj, n = 101) |> st_cast("POINT")
+
+# Construct 100 individual line segments (chunks)
+segments <- list()
+for (i in 1:100) {
+  segments[[i]] <- st_linestring(rbind(st_coordinates(pts[i]), st_coordinates(pts[i+1])))
+}
+segments_sf <- st_sfc(segments, crs = 25830) |> st_sf(segment_id = 1:100, geometry = _)
+
+# Transform segments back to WGS84 for extraction and overlay
+segments_wgs84 <- st_transform(segments_sf, 4326)
+```
+
+### 3. Extract elevation and associate with mobility flows
+
+For each chunk, we calculate the average elevation from the DEM. We then identify which district/zone each chunk's centroid falls into and join the total origin trip volume (flow) for that district.
+
+```{r}
+#| label: extract-elev-and-flows
+#| eval: false
+#| echo: true
+# Extract average elevation for each segment
+elev_vals <- terra::extract(elev, vect(segments_wgs84), fun = mean, na.rm = TRUE)
+segments_wgs84$elevation <- elev_vals[, 2]
+
+# Map segments to districts using their centroids
+spod_set_data_dir('data')
+zones <- spod_get_zones(zones = "distr", ver = 2)
+bbox_north <- st_bbox(setNames(c(-3.1, 42.8, -1.0, 43.4), c("xmin", "ymin", "xmax", "ymax")), crs = 4326)
+bbox_sf <- st_as_sfc(bbox_north)
+zones_wgs84 <- st_transform(zones, 4326)
+sf_use_s2(FALSE)
+zones_north <- zones_wgs84 |> st_filter(bbox_sf, .predicate = st_intersects)
+
+segments_centroid <- st_centroid(segments_wgs84)
+segments_zone <- st_join(segments_centroid, zones_north)
+segments_wgs84$zone_id <- segments_zone$id
+
+# Calculate flow for each zone from the precomputed dataset
+flows_north_time <- readRDS("flows_north_time.rds")
+zone_flows <- flows_north_time |>
+  group_by(origin) |>
+  summarise(total_flow = sum(count, na.rm = TRUE), .groups = "drop")
+
+# Join flow data and handle missing data
+segments_final <- segments_wgs84 |>
+  left_join(zone_flows, by = c("zone_id" = "origin")) |>
+  replace_na(list(total_flow = 0, elevation = 0))
+
+# Calculate Pearson correlation coefficient
+cor_val <- cor(segments_final$elevation, segments_final$total_flow, use = "complete.obs")
+cat(paste("Pearson Correlation between Elevation and Flow:", round(cor_val, 4), "\n"))
+```
+
+### 4. Visualization
+
+We plot the elevation raster alongside the study zones and transect line (Map), the elevation profile along the line, and the relationship between elevation and flow.
+
+```{r}
+#| label: plot-spatial-analysis
+#| eval: false
+#| echo: true
+# Define start and end point labels for the map
+transect_points <- st_sfc(
+  st_point(c(-3.1, 42.8)),
+  st_point(c(-1.0, 43.4)),
+  crs = 4326
+) |> st_sf(name = c("Start", "End"), geometry = _)
+
+# A. Create the static Map using tmap
+current_mode <- tmap_mode("plot")
+map_plot <- tm_shape(elev) +
+  tm_raster(col.scale = tm_scale_continuous(values = "terrain"),
+            col.legend = tm_legend("Elevation (m)")) +
+  tm_shape(zones_north) +
+  tm_borders(col = "black", lwd = 0.5) +
+  tm_shape(line) +
+  tm_lines(col = "blue", linewidth = 3) +
+  tm_shape(transect_points) +
+  tm_symbols(size = 0.5, col = "red") +
+  tm_text("name", ymod = 0.5)
+
+print(map_plot)
+tmap_mode(current_mode)
+
+# B. Plot the elevation profile
+# Calculate distance along the line from the start point (in km)
+start_pt <- st_sfc(st_point(c(-3.1, 42.8)), crs = 4326) |> st_transform(25830)
+segments_final_proj <- st_transform(segments_final, 25830)
+segments_final$dist_km <- as.numeric(st_distance(st_centroid(segments_final_proj), start_pt)) / 1000
+
+p_elev <- ggplot(segments_final, aes(x = dist_km, y = elevation)) +
+  geom_line(color = "darkgreen", linewidth = 1) +
+  geom_point(color = "darkgreen", size = 1.5) +
+  labs(
+    title = "Elevation Profile Along the Transect Line",
+    x = "Distance from Start (km)",
+    y = "Average Elevation (m a.s.l.)"
+  ) +
+  theme_minimal()
+print(p_elev)
+
+# C. Plot the elevation vs flow correlation
+p_cor <- ggplot(segments_final, aes(x = elevation, y = total_flow)) +
+  geom_point(color = "blue", alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Correlation: Elevation vs District Flow",
+    subtitle = paste("Pearson Correlation:", round(cor_val, 4)),
+    x = "Average Elevation (m a.s.l.)",
+    y = "Total Zone Origin Flow"
+  ) +
+  theme_minimal()
+print(p_cor)
+```
+
 ## Research questions
 
 Below are suggested research questions you can explore with the `spanishoddata` package and the tools introduced in this workbook.
