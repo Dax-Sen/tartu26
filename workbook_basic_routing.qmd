@@ -2,272 +2,572 @@
 title: "Getting Started with Routing"
 ---
 
-Packages
+## Introduction
+
+In this workbook, you will learn the fundamentals of network routing using open street map (OSM) data and origin-destination (OD) flows.
+
+### What you will learn
+
+By working through this notebook, you will:
+
+- Extract road network data from OSM using the `osmextract` package
+- Build a spatial network graph from raw road geometries with the `sfnetworks` package
+- Calculate network metrics such as centrality to understand the structure of the road network
+- Assign OD flows to shortest paths using a simple all-or-nothing traffic assignment model
+- Visualise traffic flows on individual road segments
+- Measure route directness and network efficiency
+
+## Setup
+
+### Install and load required packages
+
+We begin by installing and loading the packages required for network analysis, geospatial operations, and visualisation.
 
 ```{r}
 #| label: set-up-pkgs
-pkgs = c(
-  "tidyverse",
-  "sf",
-  "sfnetworks",
-  "osmextract",
-  "tmap",
-  "tmap.networks",
-  "tidygraph",
-  "igraph",
-  "crsuggest"
+#| code-summary: "Install and load required packages for routing analysis"
+pkgs <- c(
+    "tidyverse", # Data manipulation and visualisation
+    "sf", # Spatial data handling
+    "sfnetworks", # Spatial network operations
+    "osmextract", # Download OSM data
+    "tmap", # Static and interactive maps
+    "tmap.networks", # Network-specific map functions
+    "tidygraph", # Tidy graph operations
+    "igraph", # Graph algorithms
+    "crsuggest" # Suggest appropriate coordinate reference systems
 )
 
-# Installing the packages in the pkgs vector
+# Install the packages
 pak::pkg_install(pkgs)
 
-# Loading all the packages,
-# this is equivalent to call library() for each one
-sapply(pkgs,require,character.only = TRUE)
+# Load all packages
+sapply(pkgs, require, character.only = TRUE)
 ```
 
-Loading data from main workbook
+## Load data
+
+### Load origin-destination flows and zone locations
+
+We use the Northern Spain study area data from the main workbook. The dataset contains hourly flows between districts and the coordinates of zone centroids.
 
 ```{r}
 #| label: load-od-data
-
+#| code-summary: "Load OD flows and zone locations for Northern Spain"
+# Check if data files exist locally; if not, download from GitHub releases
 if (!file.exists("flows_north_time.rds")) {
-  message("Precomputed Northern Spain data not found. Download the raw data with the code block above or download from the GitHub release assets.")
-  # Download from GitHub release assets:
-  # system("gh release download v1 --pattern 'flows_north_time.rds'")
-  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/"
-  for(f in c("flows_north_time.rds", "locations_north.rds")) {
-      download.file(paste0(release_url, f), f, mode = "wb")
-  }
+    message(
+        "Precomputed Northern Spain data not found. Downloading from GitHub releases..."
+    )
+    release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/"
+    for (f in c("flows_north_time.rds", "locations_north.rds")) {
+        download.file(paste0(release_url, f), f, mode = "wb")
+    }
 }
 
+# Load the flows and location data
 flows_north_time <- readRDS("flows_north_time.rds")
 locations_north <- readRDS("locations_north.rds")
 ```
+## Extract and prepare the network
 
-Extracting OSM data
+### Sample zones from high-flow origins
 
-Sampling four of the most relevant zones
+We identify zones involved in the highest traffic flows and select a subset for detailed routing analysis. This helps us focus on the most active corridors in the study area.
 
 ```{r}
 #| label: sample-zones
-max_flow_zones <- flows_north_time |> 
-  slice_max(n = 50,order_by = count) |> 
-  select(origin,dest,count) |> 
-  pivot_longer(names_to = "type", values_to = "zone",cols = -count) |> 
-  mutate(zone = as.character(zone)) |> 
-  filter(str_detect(zone,"_|external",negate = TRUE)) |> 
-  pull(zone) |> 
-  unique()
+#| code-summary: "Identify and sample high-flow zones"
+# Find the zones involved in the top 50 flows
+max_flow_zones <- flows_north_time |>
+    slice_max(n = 50, order_by = count) |>
+    select(origin, dest, count) |>
+    pivot_longer(names_to = "type", values_to = "zone", cols = -count) |>
+    mutate(zone = as.character(zone)) |>
+    # Filter out external zones (represented by underscores and "external")
+    filter(str_detect(zone, "_|external", negate = TRUE)) |>
+    pull(zone) |>
+    unique()
 
-
+# Set seed for reproducibility
 set.seed(1234)
-all_zones <- locations_north |> 
-  st_as_sf(coords = c("lon","lat"),crs = 4326)
-sample_zones <- locations_north |> 
-  st_as_sf(coords = c("lon","lat"),crs = 4326) |>
-  filter(id %in% max_flow_zones) |> 
-  sample_n(4)
 
-# tmap_mode("view")
-# qtm(sample_zones)
-  
+# Convert zone locations to sf object with geographic coordinates
+all_zones <- locations_north |>
+    st_as_sf(coords = c("lon", "lat"), crs = 4326)
+
+# Randomly sample 3 zones from the high-flow areas
+sample_zones <- all_zones |>
+    filter(id %in% max_flow_zones) |>
+    sample_n(3)
 ```
+
+### Download and process the road network
+
+Next, we download the driving network for Spain from OSM, filter to relevant road types, and fill in missing speed limit data.
 
 ```{r}
 #| label: process-network
 #| eval: false
+#| code-summary: "Download OSM network and prepare for routing"
+# Create a buffer around all zones to define the study area
+zones_buffer <- all_zones |>
+    st_union() |>
+    st_buffer(5e3) |> # 5 km buffer
+    st_convex_hull() # Create convex hull
 
-zones_buffer <- all_zones |> st_union() |> st_buffer(5e3) |> st_convex_hull()
+# Download driving network for Spain from OSM
+net <- oe_get_network(
+    "Spain",
+    mode = "driving",
+    extra_tags = c("maxspeed")
+    # Optionally filter by bounding box:
+    # boundary = zones_buffer,
+    # boundary_type = "clip"
+)
 
-# Extracting the driving network using osmextract
-net <- oe_get_network("Spain",
-                      mode = "driving",
-                      extra_tags = c("maxspeed")
-                      # boundary = zones_buffer,
-                      # boundary_type = "clip"
-                      )
+# Define road types to retain (motorways, trunk, primary, secondary roads)
+highway_types_valid <- c("motorway", "trunk", "primary", "secondary")
 
-highway_types_valid <-  c("motorway","trunk","primary","secondary")
+# Simplify the highway classification by removing "_link" suffix
+# (e.g., "primary_link" becomes "primary")
+net$highway <- str_remove(net$highway, "_link")
 
-# Simplifying the highway tag
-net$highway <- str_remove(net$highway,"_link")
+# Filter to only the selected road types
+net <- net |>
+    filter(highway %in% highway_types_valid)
 
-# net$highway |> unique()
 
-# filtering only relevant road types
-net <- net |> filter(highway %in% highway_types_valid)
-
-# Casting the sf object as a compatible geometry for sfnetworks
+# Ensure all geometries are single-part linestrings (not multi-part)
 net <- net |> st_cast("LINESTRING")
 
-# eliminating the other_tags column
+# Remove unnecessary columns to reduce data size
 net$other_tags <- NULL
 
-
-# Extracting the most frequent speed limits based on distance of elements 
+# Calculate the most common speed limit for each road type
+# by finding the limit that covers the greatest distance
 speed_limits <- net |>
-  mutate(dist = as.numeric(st_length(geometry))) |> 
-  st_drop_geometry() |>
-  drop_na(maxspeed) |>
-  summarise(across(dist,sum),.by = c(highway,maxspeed)) |>
-  slice_max(dist,by = "highway",n = 1)
+    mutate(dist = as.numeric(st_length(geometry))) |>
+    st_drop_geometry() |>
+    drop_na(maxspeed) |>
+    summarise(across(dist, sum), .by = c(highway, maxspeed)) |>
+    slice_max(dist, by = "highway", n = 1)
 
-# Creating a column for filling the speed limits if missing
-net$maxspeed_ifna <- as.numeric(speed_limits$maxspeed[match(net$highway,speed_limits$highway)])
+# Create a lookup column for missing speed limits based on road type
+net$maxspeed_ifna <- as.numeric(
+    speed_limits$maxspeed[match(net$highway, speed_limits$highway)]
+)
 
-# Casting the maxspeed as numeric
+# Convert speed limits to numeric (some are stored as text)
 net$maxspeed <- as.numeric(net$maxspeed)
 
-# Filling missing speed limits
-net$maxspeed <- coalesce(net$maxspeed,net$maxspeed_ifna)
+# Fill missing speed limits with the mode (most common) for that road type
+net$maxspeed <- coalesce(net$maxspeed, net$maxspeed_ifna)
 
-# Saving 
-net <- net |> 
-  select(osm_id,
-         name,
-         highway,
-         maxspeed)
+# Keep only essential columns for routing
+net <- net |>
+    select(osm_id, name, highway, maxspeed)
 
-zones_mask <- st_within(net,zones_buffer) |> vapply(length,integer(1))
-zones_mask <- zones_mask>0
-# Saving the clean network for the whole contry
-write_rds(net,"clean_net.rds")
-write_rds(net[zones_mask,],"clean_net_study_area.rds")
+# Filter network to study area
+zones_mask <- st_within(net, zones_buffer) |> vapply(length, integer(1))
+zones_mask <- zones_mask > 0
 
-system("gh release upload v1 clean_net.rds clean_net_study_area.rds --clobber")
+# Save the complete network and the study area subset
+write_rds(net, "clean_net.rds")
+write_rds(net[zones_mask, ], "clean_net_study_area.rds")
 
+# Upload to GitHub releases
+# system("gh release upload v1 clean_net.rds clean_net_study_area.rds --clobber")
 ```
 
+### Load the pre-processed network
 
+For efficiency, we load the pre-processed network from the study area.
 
 ```{r}
-#| lable: load-clean-sf-net
-
-if(!file.exists("clean_net_study_area.rds")){
-  message("Precomputed Northern Spain network not found. Download the raw data with the code block below or download from the GitHub release assets.")
-  
-  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/"
-  for(f in c("clean_net_study_area.rds")) {
-      download.file(paste0(release_url, f), f, mode = "wb")
-  }
+#| label: load-clean-sf-net
+#| code-summary: "Load pre-processed road network"
+# Check if the processed network exists locally; if not, download
+if (!file.exists("clean_net_study_area.rds")) {
+    message(
+        "Pre-processed network not found. Downloading from GitHub releases..."
+    )
+    release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/"
+    download.file(
+        paste0(release_url, "clean_net_study_area.rds"),
+        "clean_net_study_area.rds",
+        mode = "wb"
+    )
 }
 
+# Load the network
 net <- readRDS("clean_net_study_area.rds")
 ```
 
-Creating the primal graph (undirected) from the sf object using `sfnetworks`
+## Build the network graph
+
+### Convert the road network to a spatial graph
+
+We convert the spatial line features into a graph structure that enables efficient routing. This involves:
+
+1. Finding the optimal coordinate reference system for accurate distance calculations
+2. Creating an `sfnetwork` object with nodes (intersections) and edges (road segments)
+3. Subdividing edges at intersection points to create true network nodes
+4. Calculating travel times based on road geometry and speed limits
+5. Simplifying the network by removing unnecessary intermediate nodes
 
 ```{r}
-# Identifying the best crs for our data
-
+#| label: create-sfnetwork
+#| code-summary: "Convert road network to sfnetwork graph structure"
+# Find the best projected coordinate reference system for our area
 best_crs <- suggest_top_crs(net, units = "m")
 
-# Creating the sfnetwork
+# Create the sfnetwork with the best CRS
+# directed = FALSE means we can travel in both directions on roads
 sfnet <- net |>
-  st_transform(best_crs) |> 
-  as_sfnetwork(directed = FALSE)
+    st_transform(best_crs) |>
+    as_sfnetwork(directed = FALSE)
+```
 
-# Preprocessing
-## Dividing the linestrings using overlapping points creating junctions
+### Subdivide the network at intersections
+
+The network needs to be subdivided so that intersections become explicit nodes, allowing precise routing.
+
+```{r}
+#| label: subdivide-network
+#| code-summary: "Subdivide network at intersection points"
+# Create junctions where road segments overlap
+# This converts implicit intersections into explicit nodes
 sf_net_subdiv <- convert(sfnet, to_spatial_subdivision)
 
-
-## Calculating travel times for each edge based on speed limit
+# Keep only the largest connected component (ignoring isolated segments)
+# and calculate travel times for each edge
 sf_net_subdiv <- sf_net_subdiv |>
-  activate(nodes) |> 
-  filter(group_components() == 1) |> 
-  activate(edges) |> 
-  mutate(speed = units::set_units(maxspeed[cur_group_id()], "km/h"),
-         dist = st_length(geometry),
-         tra_time = units::set_units(dist/(speed),"min"))
-
-## Removing interstitial nodes (nodes degree 2)
-sf_net_simpl <- convert(sf_net_subdiv,
-                        to_spatial_smooth,
-                        summarise_attributes = list(dist = "sum",
-                                                    tra_time = "sum",
-                                                    osm_id = "first",
-                                                    highway = "first"))
+    activate(nodes) |>
+    # Filter to connected nodes (group_components() labels each connected component)
+    filter(group_components() == 1) |>
+    activate(edges) |>
+    # Calculate travel time based on distance and speed
+    mutate(
+        speed = units::set_units(maxspeed[cur_group_id()], "km/h"),
+        dist = st_length(geometry),
+        travel_time = units::set_units(dist / speed, "min")
+    )
 ```
 
-A quick visualisation
+### Simplify the network
+
+We remove unnecessary intermediate nodes (where degree = 2) to create a simplified network suitable for routing analysis.
 
 ```{r}
-tm_shape(sf_net_simpl)+
-  tm_edges("highway")+
-  tm_shape(sample_zones)+
-  tm_dots("red")
+#| label: simplify-network
+#| code-summary: "Simplify network by removing interstitial nodes"
+# Remove nodes of degree 2 (intermediate nodes on straight road segments)
+# and aggregate edge attributes appropriately
+sf_net_simpl <- convert(
+    sf_net_subdiv,
+    to_spatial_smooth,
+    summarise_attributes = list(
+        dist = "sum", # Sum distances
+        travel_time = "sum", # Sum travel times
+        osm_id = "first", # Keep first OSM ID
+        highway = "first" # Keep first highway type
+    )
+)
 ```
 
-Some metrics about our network graph
+## Explore network metrics
+
+### Visualise the simplified network
 
 ```{r}
-# Diameter in travel time
-diameter(sf_net_simpl,directed = FALSE, weights = pull(sf_net_simpl,tra_time))
-
-#Diameter in distance
-diameter(sf_net_simpl,directed = FALSE, weights = pull(sf_net_simpl,dist))*1e-3
+#| label: visualise-network
+#| code-summary: "Create a basic map of the road network and sample zones"
+# Create a map showing the network coloured by road type
+tm_shape(sf_net_simpl) +
+    tm_edges("highway") +
+    # Overlay the sample zones in red
+    tm_shape(sample_zones) +
+    tm_dots(col = "red", size = 0.5)
 ```
 
-Exploring the centrality of the network
+### Calculate network diameter
+
+The diameter tells us the longest shortest-path distance in the network. We calculate it in both travel time and distance.
 
 ```{r}
-sf_net_simpl <- sf_net_simpl |> 
-  activate(edges) |> 
-  mutate(bc = centrality_edge_betweenness(weights = tra_time))
+#| label: network-diameter
+#| code-summary: "Calculate network diameter in time and distance"
+# Diameter in travel time (minutes)
+diam_time <- diameter(
+    sf_net_simpl,
+    directed = FALSE,
+    weights = pull(sf_net_simpl, "travel_time")
+)
+cat("Network diameter (travel time):", as.numeric(diam_time), "minutes\n")
 
+# Diameter in distance (kilometres)
+diam_dist <- diameter(
+    sf_net_simpl,
+    directed = FALSE,
+    weights = pull(sf_net_simpl, "dist")
+) *
+    1e-3 # Convert from m to km
+cat("Network diameter (distance):", diam_dist, "km\n")
+```
+
+### Calculate edge betweenness centrality
+
+Betweenness centrality measures how often a road segment appears on shortest paths between all pairs of nodes. Roads with high centrality are usually key components in the network.
+
+```{r}
+#| label: network-centrality
+#| code-summary: "Calculate and visualise edge betweenness centrality"
+# Calculate edge betweenness centrality weighted by travel time
+sf_net_simpl <- sf_net_simpl |>
+    activate(edges) |>
+    mutate(
+        # betweenness: higher values = more central to network connectivity
+        betweenness = centrality_edge_betweenness(weights = travel_time)
+    )
+
+# Visualise centrality as a map
 ggplot() +
-  geom_sf(data = st_as_sf(sf_net_simpl, "edges"), aes(col = log10(bc)))+
-  scale_color_continuous(palette = "viridis")+
-  theme_void()
+    geom_sf(
+        data = st_as_sf(sf_net_simpl, "edges"),
+        aes(colour = log10(betweenness)),
+        linewidth = 1
+    ) +
+    scale_colour_viridis_c(name = "Log10(Betweenness)") +
+    theme_void() +
+    labs(title = "Road Network Centrality")
 ```
 
-Extracting routes for the selected zones
+## Routing and traffic assignment
+
+### Find the peak flow hour
+
+We identify the hour with the highest total flows to use for our routing analysis. This ensures we study the most congested period.
 
 ```{r}
-sf_nodes <- st_as_sf(sf_net_simpl,"nodes")
+#| label: find-peak-hour
+#| code-summary: "Identify the hour with maximum flows"
+# Aggregate flows by hour and find the peak
+max_flow_time <- flows_north_time |>
+    summarise(across(count, sum), .by = time) |>
+    slice_max(n = 1, order_by = count) |>
+    pull(time)
+
+cat("Peak flow hour:", max_flow_time, "\n")
+```
+
+### Map sample zones to network nodes
+
+To perform routing, we must link our OD zones to the nearest network nodes.
+
+```{r}
+#| label: map-zones-to-nodes
+#| code-summary: "Find nearest network nodes for each sample zone"
+# Extract nodes as spatial features
+sf_nodes <- st_as_sf(sf_net_simpl, "nodes")
+
+# Find the nearest node for each sample zone
 node_indexes <- sample_zones |>
-  st_transform(st_crs(sf_net_simpl)) |> 
-  st_nearest_feature(sf_nodes)
+    st_transform(st_crs(sf_net_simpl)) |>
+    st_nearest_feature(sf_nodes)
 
-sample_od <- expand.grid(origin = node_indexes[1],
-                         dest = node_indexes) |>
-  filter(origin != dest)
+# Create a lookup table linking zones to nodes
+zone_to_node <- tibble(
+    zone = sample_zones$id,
+    node = node_indexes
+)
+
+# Create an origin-destination table
+# We'll route from one zone to all others
+sample_od <- expand_grid(
+    origin = sample_zones$id[2],
+    dest = sample_zones$id
+) |>
+    filter(origin != dest) |>
+    # Join with node indices
+    left_join(zone_to_node, by = c("origin" = "zone")) |>
+    left_join(zone_to_node, by = c("dest" = "zone"), suffix = c(".o", ".d")) |>
+    # Join with flow data at peak hour
+    left_join(
+        flows_north_time |>
+            filter(time == max_flow_time) |>
+            select(-time),
+        by = c("origin", "dest")
+    )
+
+# Calculate straight-line distance between zones
+sample_od$straight_line_dist <- st_distance(
+    sample_zones[match(sample_od$origin, sample_zones$id), ],
+    sample_zones[match(sample_od$dest, sample_zones$id), ],
+    by_element = TRUE
+) |>
+    as.numeric()
 ```
 
-Extracting paths
+### Calculate shortest paths
+
+We use the Dijkstra algorithm (via `st_network_paths()`) to find the quickest route between each OD pair, weighted by travel time.
 
 ```{r}
-# code extracted from sfnetworks documentation
+#| label: calculate-paths
+#| code-summary: "Find shortest travel-time paths between sample OD pairs"
+# Calculate quickest paths from one origin to all destinations
+# weights = "travel_time" means we minimise travel time, not distance
 
-paths = st_network_paths(sf_net_simpl, from = node_indexes[1], to = sample_od$dest, weights = "tra_time")
-paths
+# This code has been extracted from the sfnetworks documentation and adapted for our dataset
 
-plot_path = function(node_path) {
-  sf_net_simpl %>%
-    activate("nodes") %>%
-    slice(node_path) %>%
-    plot(cex = 1.5, lwd = 1.5, add = TRUE)
+paths <- st_network_paths(
+    sf_net_simpl,
+    from = sample_od$node.o[1], # Start from first origin
+    to = sample_od$node.d, # End at all destinations
+    weights = "travel_time"
+)
+
+# Helper function to plot a path on the network
+plot_path <- function(node_path) {
+    sf_net_simpl %>%
+        activate("nodes") %>%
+        slice(node_path) %>%
+        plot(cex = 1.5, lwd = 1.5, add = TRUE)
 }
 
-colors = sf.colors(4, categorical = TRUE)
+# Set up plot with sample colours
+colours <- sf.colors(4, categorical = TRUE)
 
+# Plot the network and overlay all paths
 plot(sf_net_simpl, col = "grey")
 paths %>%
-  pull(node_paths) %>%
-  walk(plot_path)
-sf_net_simpl %>%
-  activate("nodes") %>%
-  st_as_sf() %>%
-  slice(node_indexes) %>%
-  plot(col = colors, pch = 8, cex = 2, lwd = 2, add = TRUE)
+    pull(node_paths) %>%
+    walk(plot_path)
 
+# Highlight sample zones
+sf_net_simpl %>%
+    activate("nodes") %>%
+    st_as_sf() %>%
+    slice(node_indexes) %>%
+    plot(col = colours, pch = 8, cex = 2, lwd = 2, add = TRUE)
 ```
 
-Extracting distance and travel time for each OD pair
+### Extract route characteristics
+
+For each path, we extract the total distance and travel time.
 
 ```{r}
+#| label: extract-route-metrics
+#| code-summary: "Extract distance and travel time for each route"
+# Extract total distance for each path
+sample_od$network_dist <- vapply(
+    paths$edge_paths,
+    function(edges) {
+        pull(sf_net_simpl, "dist")[edges] |> sum()
+    },
+    numeric(1)
+)
 
+# Extract total travel time for each path
+sample_od$travel_time <- vapply(
+    paths$edge_paths,
+    function(edges) {
+        pull(sf_net_simpl, "travel_time")[edges] |> sum()
+    },
+    numeric(1)
+)
 ```
+
+### Measure route directness
+
+Directness compares the actual route distance to the straight-line distance. A value of 1.0 means the route is perfectly direct; higher values indicate more circuitous routing.
+
+```{r}
+#| label: measure-directness
+#| code-summary: "Calculate route directness for each OD pair"
+sample_od_summary <- sample_od |>
+    mutate(
+        directness = straight_line_dist / network_dist,
+        # Convert travel time from seconds to minutes
+        travel_time_min = as.numeric(travel_time) / 60
+    ) |>
+    select(
+        origin,
+        dest,
+        straight_line_dist,
+        network_dist,
+        directness,
+        travel_time_min,
+        count
+    )
+
+# Display a summary
+print(sample_od_summary)
+```
+
+## Assign flows to network
+
+### Apply all-or-nothing traffic assignment
+
+We assign all OD flows to their shortest paths. This creates an estimate of traffic volume on each road segment.
+
+```{r}
+#| label: assign-flows
+#| code-summary: "Assign OD flows to shortest paths"
+# Extract edges as spatial features
+sf_edges <- st_as_sf(sf_net_simpl, "edges")
+
+# Assign flows to edges
+# For each OD pair, we add its flow count to all edges in its shortest path
+edge_flows <- lapply(
+    1:nrow(sample_od),
+    function(i) {
+        # Get edges for this path
+        path_edges <- sf_edges[paths$edge_paths[[i]], ] |>
+            st_drop_geometry()
+        # Add flow count
+        path_edges$flow <- sample_od$count[i]
+        path_edges
+    }
+) |>
+    bind_rows() |>
+    # Aggregate flows for each edge (in case multiple paths use the same edge)
+    summarise(across(flow, sum), .by = c(from, to))
+```
+
+## Visualise results
+
+### Create a flow map
+
+Finally, we visualise the traffic flows on the network, showing which roads carry the most traffic.
+
+```{r}
+#| label: visualise-flows
+#| code-summary: "Create a map of traffic flows on the road network"
+sf_edges |>
+    left_join(edge_flows, by = c("from", "to")) |>
+    tm_shape() +
+    # Colour and width roads by flow volume
+    tm_lines(
+        col = "flow",
+        col.scale = tm_scale_intervals(
+            n = 5,
+            values = "carto.ag_sunset"
+        ),
+        lwd = "flow",
+        lwd.scale = tm_scale_intervals(
+            n = 3,
+            values = c(2, 3, 4),
+            value.na = 1
+        ),
+        lwd.legend = tm_legend_hide()
+    ) +
+    tm_layout(
+        title = "Traffic flows assigned to shortest paths",
+        legend.position = c("left", "bottom")
+    )
+```
+
+
 
