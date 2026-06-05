@@ -345,22 +345,6 @@ ggplot() +
 
 ## Routing and traffic assignment
 
-### Find the peak flow hour
-
-We identify the hour with the highest total flows to use for our routing analysis. This ensures we study the most congested period.
-
-```{r}
-#| label: find-peak-hour
-#| code-summary: "Identify the hour with maximum flows"
-# Aggregate flows by hour and find the peak
-max_flow_time <- flows_north_time |>
-    summarise(across(count, sum), .by = time) |>
-    slice_max(n = 1, order_by = count) |>
-    pull(time)
-
-cat("Peak flow hour:", max_flow_time, "\n")
-```
-
 ### Map sample zones to network nodes
 
 To perform routing, we must link our OD zones to the nearest network nodes.
@@ -386,12 +370,36 @@ zone_to_node <- tibble(
 # We'll route from one zone to all others
 sample_od <- expand_grid(
     origin = sample_zones$id[2],
-    dest = sample_zones$id
-) |>
+    dest = sample_zones$id) |>
     filter(origin != dest) |>
     # Join with node indices
     left_join(zone_to_node, by = c("origin" = "zone")) |>
-    left_join(zone_to_node, by = c("dest" = "zone"), suffix = c(".o", ".d")) |>
+    left_join(zone_to_node, by = c("dest" = "zone"),
+              suffix = c(".o", ".d"))
+```
+
+### Find the peak flow hour
+
+We identify the hour with the highest total flows to use for our routing analysis. 
+
+```{r}
+#| label: find-peak-hour
+#| code-summary: "Identify the hour with maximum flows"
+# Aggregate flows by hour and find the peak
+max_flow_time <- flows_north_time |>
+    semi_join(sample_od,
+              by = c("origin","dest")) |>
+    summarise(across(count,sum),.by = time) |>
+    slice_max(n = 1,order_by = count) |>
+    pull(time)
+
+cat("Peak flow hour:", max_flow_time, "\n")
+```
+
+Let's join the flows to the sample OD pairs
+
+```{r}
+sample_od <- sample_od |>
     # Join with flow data at peak hour
     left_join(
         flows_north_time |>
@@ -555,6 +563,9 @@ sf_edges |>
             n = 5,
             values = "carto.ag_sunset"
         ),
+        col.legend = tm_legend(
+            title = "Traffic flows assigned to shortest paths",
+            legend.position = c("left", "bottom")),
         lwd = "flow",
         lwd.scale = tm_scale_intervals(
             n = 3,
@@ -562,11 +573,7 @@ sf_edges |>
             value.na = 1
         ),
         lwd.legend = tm_legend_hide()
-    ) +
-    tm_layout(
-        title = "Traffic flows assigned to shortest paths",
-        legend.position = c("left", "bottom")
-    )
+    ) 
 ```
 
 
