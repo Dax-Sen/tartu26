@@ -1,5 +1,6 @@
 ---
 title: "Spatio-temporal data with OD data"
+number-sections: true
 ---
 
 ## Install the required packages
@@ -41,10 +42,7 @@ recent_dates = tail(valid_dates, 3)
 # Define a geographic bounding box for the Northern Spain study area
 # Covers from the coast to south of Pamplona, and from the French border
 # westward to include the Pamplona--Donostia corridor
-bbox_north <- st_bbox(
-  c(xmin = -3.1, ymin = 42.8, xmax = -1.0, ymax = 43.4),
-  crs = st_crs(4326)
-)
+bbox_north <- st_bbox(c(-3.1, 42.8, -1.0, 43.4), crs = st_crs(4326))
 bbox_sf <- st_as_sfc(bbox_north)
 
 # Select zones that intersect the bounding box
@@ -149,19 +147,41 @@ flowmap_north_interactive <- flowmapblue(
 flowmap_north_interactive
 ```
 
-![](images/paste-5.png)
+The resulting interactive map is shown in @fig-flowmap-blue.
 
-### Northern Spain flow map using `mapgl`
+![Interactive flow map of the Pamplona-to-Donostia corridor in Northern Spain, created using the FlowmapBlue library.](images/paste-5.png){#fig-flowmap-blue}
+
+<details>
+
+<summary>Getting a Mapbox token</summary>
+
+## Setting up Mapbox Access Token
+
+Get a free token from https://account.mapbox.com/access-tokens/
+
+Or, longer term solution: `usethis::edit_r_environ()` Restart R after setting the token for it to take effect
+
+``` r
+Sys.setenv(MAPBOX_TOKEN="YOUR_MAPBOX_ACCESS_TOKEN")
+```
+
+</details>
+
+<details>
+<summary>Bonus exercise: Northern Spain flow map using `mapgl`</summary>
 
 Alternatively, we can use the `mapgl` package to visualize the Northern Spain flows using high-performance WebGL rendering.
 This operates entirely within the browser without requiring a Mapbox account, and adds an interactive timeline scrubber to explore the spatio-temporal trends.
+
+This approach is a bonus exercise and designed to showcase the capabilities of `mapgl` for spatio-temporal flow maps, but it requires a version of the package from the e-kotov R-universe repository that includes the `add_time_control()` function.
 
 ```{r}
 #| label: flowmap-northern-spain-mapgl
 #| eval: false
 #| echo: true
 #| code-summary: "Render the Northern Spain flow map using mapgl and MapLibre"
-
+# Note: this code block requires a version of the mapgl package from the e-kotov R-universe repository, which includes the add_time_control() function for spatio-temporal flow maps.
+install.packages('mapgl', repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org'))
 library(mapgl)
 
 # Create the MapLibre map centered on the Northern Spain corridor
@@ -190,9 +210,9 @@ north_mapgl <- maplibre(
 north_mapgl
 ```
 
-You should see something like this:
+You should see something like this (as shown in @fig-flowmap-mapgl):
 
-![](images/paste-6.png)
+![Spatio-temporal flow map of the Northern Spain corridor rendered using WebGL with the mapgl package.](images/paste-6.png){#fig-flowmap-mapgl}
 
 ```{r}
 #| eval: false
@@ -200,20 +220,6 @@ You should see something like this:
 
 # Save the map as an HTML file
 htmlwidgets::saveWidget(flowmap_north_interactive, "north_spain_flowmap.html")
-```
-
-<details>
-
-<summary>Getting a Mapbox token</summary>
-
-## Setting up Mapbox Access Token
-
-Get a free token from https://account.mapbox.com/access-tokens/
-
-Or, longer term solution: `usethis::edit_r_environ()` Restart R after setting the token for it to take effect
-
-``` r
-Sys.setenv(MAPBOX_TOKEN="YOUR_MAPBOX_ACCESS_TOKEN")
 ```
 
 </details>
@@ -232,9 +238,9 @@ Our analysis proceeds in five steps:
 4.  **Estimate the border effect** by comparing trip counts at comparable distances: for each distance band, what is the ratio of within-Spain trips to cross-border trips?
 5.  **Visualise** the results as a distance-decay comparison plot.
 
-We'll use a larger area to cover a roughly equal area of Spain and France.
+We'll use a larger area to cover a roughly equal area of Spain and France, as shown in @fig-cross-border-study-area.
 
-![](images/paste-7.png)
+![Geographic bounding box covering the Spain-France border effect study area.](images/paste-7.png){#fig-cross-border-study-area}
 
 ```{r}
 #| label: cross-border-analysis
@@ -247,10 +253,7 @@ sf::sf_use_s2(FALSE)
 zones <- spod_get_zones(zones = "distr", ver = 2)
 
 # Recreate larger area covering all the border between Spain and France, then select zones that intersect it:
-bbox_north <- st_bbox(
-  c(xmin = -3.1, ymin = 42, xmax = 4, ymax = 43.4),
-  crs = st_crs(4326)
-)
+bbox_north <- st_bbox(c(-3.1, 42.0, 4.0, 43.4), crs = st_crs(4326))
 bbox_sf <- st_as_sfc(bbox_north)
 zones_wgs84 <- st_transform(zones, 4326)
 zones_north <- zones_wgs84 |>
@@ -286,6 +289,7 @@ od_north <- flows |>
     id_origin %in% zones_north$id,
     id_destination %in% zones_north$id
   ) |>
+  collect() |>
   left_join(zone_country, by = c("id_origin" = "id")) |>
   rename(country_origin = country) |>
   left_join(zone_country, by = c("id_destination" = "id")) |>
@@ -320,58 +324,22 @@ ggplot(hourly_by_border, aes(x = hour, y = total_trips, colour = border_crossing
     colour = "Flow type"
   ) +
   theme_minimal()
-
+ggsave("images/hourly_border_flows.png", width = 8, height = 5)
 # ── 4. Distance-decay comparison ───────────────────────────────────
 # Compare within-Spain vs cross-border flows at similar distances
 dist_comparison <- od_north |>
-  filter(distance > 0, distance < 100) |>    # exclude intra-zonal (d=0) and extreme
-  mutate(dist_band = cut(distance, breaks = seq(0, 100, by = 10))) |>
-  group_by(dist_band, border_crossing) |>
+  group_by(distance, border_crossing) |>
   summarise(
     total_trips = sum(n_trips, na.rm = TRUE),
     n_pairs     = n(),
     .groups     = "drop"
   ) |>
   collect()
-
-# Calculate the border deterrence ratio
-border_ratio <- dist_comparison |>
-  filter(border_crossing %in% c("within-Spain", "cross-border")) |>
-  tidyr::pivot_wider(
-    id_cols     = dist_band,
-    names_from  = border_crossing,
-    values_from = total_trips,
-    values_fill = 0
-  ) |>
-  mutate(
-    deterrence_ratio = `within-Spain` / (`cross-border` + 1),  # +1 avoids Inf
-    deterrence_label = paste0(round(deterrence_ratio, 1), "×")
-  )
-
-ggplot(border_ratio, aes(x = dist_band, y = deterrence_ratio)) +
-  geom_col(fill = "steelblue", alpha = 0.7) +
-  geom_text(aes(label = deterrence_label), vjust = -0.3, size = 3) +
-  labs(
-    title = "Border deterrence effect by distance band",
-    subtitle = "Ratio of within-Spain to cross-border trips (>1 = border deters travel)",
-    x = "Distance band (km)",
-    y = "Within-Spain / Cross-border trip ratio"
-  ) +
-  theme_minimal()
-
-# ── 5. Summary statistics ──────────────────────────────────────────
-cat("\n=== Summary: Border effect ===\n")
-total_cross <- sum(hourly_by_border$total_trips[
-  hourly_by_border$border_crossing == "cross-border"
-])
-total_spain <- sum(hourly_by_border$total_trips[
-  hourly_by_border$border_crossing == "within-Spain"
-])
-cat(sprintf("Cross-border trips: %s (%.1f%% of all trips)\n",
-  scales::comma(total_cross),
-  100 * total_cross / (total_cross + total_spain)
-))
 ```
+
+The hourly trip volumes are compared in @fig-hourly-border-flows.
+
+![Comparison of hourly trip volumes in the cross-border region, classified by border-crossing status (cross-border, within-Spain, and within-France).](images/hourly_border_flows.png){#fig-hourly-border-flows}
 
 ### Interpretation
 
@@ -385,6 +353,178 @@ cat(sprintf("Cross-border trips: %s (%.1f%% of all trips)\n",
 -   Use the `activity_origin` field to see whether cross-border trips are predominantly work, leisure, or study-related.
 -   Expand the study area westward to include **Bilbao** and compare the border effect at Irun/Hendaye (major crossing) versus more remote Pyrenean crossings.
 -   Download a **full month** of data and examine how the border effect changes on public holidays and during school vacations.
+
+## Spatial analysis: Elevation profile and flow correlation
+
+In this section, we analyze the spatial relationship between the physical geography of the region (elevation) and human mobility flows.
+We define a Southwest-to-Northeast transect line across our study corridor, segment it into 100 equal-length chunks, extract the average elevation for each chunk from a digital elevation model (DEM), and correlate this physical feature with the aggregate travel flows in the corresponding districts.
+
+### Download and load elevation data
+
+We use a low-resolution Digital Elevation Model (DEM) of Spain, cropped to the Northern Spain study area.
+The file is hosted as a GitHub Release asset for quick and reliable download.
+
+```{r}
+#| label: load-elevation-data
+#| eval: false
+#| echo: true
+if (!file.exists("spain_france_elevation.tif")) {
+  release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/spain_france_elevation.tif"
+  download.file(release_url, "spain_france_elevation.tif", mode = "wb")
+}
+
+library(sf)
+library(terra)
+library(tidyverse)
+library(spanishoddata)
+library(tmap)
+
+elev <- rast("spain_france_elevation.tif")
+qtm(elev) + tm_layout(main.title = "Elevation raster for Northern Spain study area")
+```
+
+The loaded DEM is displayed in @fig-elevation-raster-map.
+
+![Digital elevation model (DEM) raster covering the Northern Spain and Southern France study area.](images/paste-8.png){#fig-elevation-raster-map}
+
+#### Exercise
+
+Read the code that download the data and add data for Andorra to avoid the gap in the DEM at the Spain--France border.
+
+### Segmentize the transect line
+
+We define the transect line from $(-1.8, 43.3)$ to $(1.8, 42.3)$ in WGS84 coordinates to follow the French-Spanish border in a straight line with roughly half of it in each country.
+To partition it into equal-length spatial chunks, we project it to UTM Zone 30N (EPSG:25830) and sample points along it to construct 100 individual segments of equal length.
+
+```{r}
+#| label: segmentize-transect
+#| eval: false
+#| echo: true
+# Create the transect line in WGS84
+line <- st_linestring(matrix(c(-1.8, 1.8, 43.3, 42.3), ncol = 2)) |>
+  st_sfc(crs = 4326) |>
+  st_sf(geometry = _)
+
+# Project to UTM 30N for equal-length segmentation
+line_proj <- st_transform(line, 25830)
+pts <- st_line_sample(line_proj, n = 101) |> st_cast("POINT")
+
+# Construct 100 individual line segments (chunks)
+segments <- list()
+for (i in 1:100) {
+  segments[[i]] <- st_linestring(rbind(st_coordinates(pts[i]), st_coordinates(pts[i+1])))
+}
+segments_sf <- st_sfc(segments, crs = 25830) |> st_sf(segment_id = 1:100, geometry = _)
+
+# Transform segments back to WGS84 for extraction and overlay
+segments_wgs84 <- st_transform(segments_sf, 4326)
+```
+
+### Extract elevation and associate with mobility flows
+
+For each chunk, we calculate the average elevation from the DEM.
+We then identify which district/zone each chunk's centroid falls into and join the total origin trip volume (flow) for that district.
+
+```{r}
+#| label: extract-elev-and-flows
+#| eval: false
+#| echo: true
+# Extract average elevation for each segment
+elev_vals <- terra::extract(elev, vect(segments_wgs84), fun = mean, na.rm = TRUE)
+segments_wgs84$elevation <- elev_vals[, 2]
+
+# Map segments to districts using their centroids
+spod_set_data_dir('data')
+zones <- spod_get_zones(zones = "distr", ver = 2)
+bbox_north <- st_bbox(c(-3.1, 42.0, 4.0, 43.4), crs = 4326)
+bbox_sf <- st_as_sfc(bbox_north)
+zones_wgs84 <- st_transform(zones, 4326)
+sf_use_s2(FALSE)
+zones_north <- zones_wgs84 |> st_filter(bbox_sf, .predicate = st_intersects)
+
+segments_centroid <- st_centroid(segments_wgs84)
+segments_zone <- st_join(segments_centroid, zones_north)
+segments_wgs84$zone_id <- segments_zone$id
+
+# Calculate flow for each zone from the precomputed dataset
+flows_north_time <- readRDS("flows_north_time.rds")
+zone_flows <- flows_north_time |>
+  group_by(origin) |>
+  summarise(total_flow = sum(count, na.rm = TRUE), .groups = "drop")
+
+# Join flow data and handle missing data
+segments_final <- segments_wgs84 |>
+  left_join(zone_flows, by = c("zone_id" = "origin")) |>
+  replace_na(list(total_flow = 0, elevation = 0))
+
+# Calculate Pearson correlation coefficient
+cor_val <- cor(segments_final$elevation, segments_final$total_flow, use = "complete.obs")
+cat(paste("Pearson Correlation between Elevation and Flow:", round(cor_val, 4), "\n"))
+```
+
+### Visualization
+
+We plot the elevation raster alongside the study zones and transect line (Map), the elevation profile along the line, and the relationship between elevation and flow.
+
+```{r}
+#| label: fig-spatial-analysis
+#| fig-cap: "Spatial relationship between physical geography (elevation) and travel flows."
+#| eval: false
+#| echo: true
+# Define start and end point labels for the map
+transect_points <- st_sfc(
+  st_point(c(-1.8, 43.3)),
+  st_point(c(1.8, 42.3)),
+  crs = 4326
+) |> st_sf(name = c("Start", "End"), geometry = _)
+
+# A. Create the static Map using tmap
+current_mode <- tmap_mode("plot")
+map_plot <- tm_shape(elev) +
+  tm_raster(col.scale = tm_scale_continuous(values = "terrain"),
+            col.legend = tm_legend("Elevation (m)")) +
+  tm_shape(zones_north) +
+  tm_borders(col = "black", lwd = 0.5) +
+  tm_shape(line) +
+  tm_lines(col = "blue", linewidth = 3) +
+  tm_shape(transect_points) +
+  tm_symbols(size = 0.5, col = "red") +
+  tm_text("name", ymod = 0.5)
+
+print(map_plot)
+tmap_mode(current_mode)
+
+# B. Plot the elevation profile
+# Calculate distance along the line from the start point (in km)
+start_pt <- st_sfc(st_point(c(-1.8, 43.3)), crs = 4326) |> st_transform(25830)
+segments_final_proj <- st_transform(segments_final, 25830)
+segments_final$dist_km <- as.numeric(st_distance(st_centroid(segments_final_proj), start_pt)) / 1000
+
+p_elev <- ggplot(segments_final, aes(x = dist_km, y = elevation)) +
+  geom_line(color = "darkgreen", linewidth = 1) +
+  geom_point(color = "darkgreen", size = 1.5) +
+  labs(
+    title = "Elevation Profile Along the Transect Line",
+    x = "Distance from Start (km)",
+    y = "Average Elevation (m a.s.l.)"
+  ) +
+  theme_minimal()
+print(p_elev)
+
+# C. Plot the elevation vs flow correlation
+p_cor <- ggplot(segments_final, aes(x = elevation, y = total_flow)) +
+  geom_point(color = "blue", alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", color = "red", se = TRUE) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Correlation: Elevation vs District Flow",
+    subtitle = paste("Pearson Correlation:", round(cor_val, 4)),
+    x = "Average Elevation (m a.s.l.)",
+    y = "Total Zone Origin Flow"
+  ) +
+  theme_minimal()
+print(p_cor)
+```
 
 ## Research questions
 
@@ -415,6 +555,30 @@ They range from descriptive to analytical and are designed to be tractable withi
 8.  **Comparative urban analysis** -- Replicate the analysis for both Seville and Northern Spain.
     Which city has higher average trip distances?
     Which shows more polycentric flow patterns (multiple distinct centres rather than a single dominant hub)?
+
+## Bonus Exercise: Contributing via Pull Request
+
+A key skill in collaborative data science is contributing improvements, fixes, or new examples to open-source project repositories using Git and GitHub.
+
+In this bonus exercise, you will create a **Pull Request (PR)** to this repository:
+
+1. **Find something to improve**: This could be correcting a typo in the documentation, adding a comment to clarify a complex code block, or contributing a new research question/exercise.
+2. **Create a branch**: In your local terminal or Codespace, create a new branch:
+   ```bash
+   git checkout -b my-improvement-branch
+   ```
+3. **Commit your changes**: Stage and commit your changes:
+   ```bash
+   git add .
+   git commit -m "docs: Fix typo in workbook"
+   ```
+4. **Push and Open a Pull Request**: Push your branch to GitHub and open a Pull Request.
+
+For a detailed step-by-step walkthrough, check out the following official guides:
+
+- **[GitHub Flow Guide](https://docs.github.com/en/get-started/using-git/about-git#github-flow)**: An introduction to branching, committing, and opening PRs.
+- **[Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)**: The official GitHub guide on how to propose changes.
+- **[Forking a repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)**: If you do not have direct push access, learn how to fork, make changes, and open a PR back to the main repository.
 
 ## Further resources
 
