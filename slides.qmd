@@ -14,8 +14,8 @@ format:
 
 - **Robin Lovelace**  
   *Associate Professor of Transport Data Science, University of Leeds*
-- **Egor Kotov**  
-  *Postdoctoral Researcher, developer of `spanishoddata` & `mapgl`*
+- **Juan Fonseca**  
+  *PhD Candidate, University of Leeds*
 
 ## Agenda
 
