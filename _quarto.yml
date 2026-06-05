@@ -25,6 +25,8 @@ website:
         text: Prerequisites
       - href: workbook.qmd
         text: Workbook
+      - href: workbook_basic_routing.qmd
+        text: Routing Workbook
       - href: https://github.com/tdscience/tartu26
         text: Source code
 
