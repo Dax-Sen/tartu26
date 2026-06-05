@@ -3,7 +3,7 @@ title: "Transport Data Science"
 subtitle: "From origin-destination to route network datasets"
 format:
   revealjs:
-    theme: league
+    theme: moon
     slide-number: true
     show-slide-number: all
     hash-type: number
@@ -14,27 +14,38 @@ format:
 
 - **Robin Lovelace**  
   *Associate Professor of Transport Data Science, University of Leeds*
-- **Egor Kotov**  
-  *Postdoctoral Researcher, developer of `spanishoddata` & `mapgl`*
+- **Juan Fonseca**  
+  *PhD Candidate, University of Leeds*
 
 ## Agenda
 
+:::: {.columns}
+
+::: {.column width="50%"}
+
 ### Day 1: Sunday, June 7
+
 - **14:00–18:00** – Practical Workshop Session 1 (with coffee break)
   - Finding and importing data
   - Origin-destination analysis
   - Visualisation
+:::
 
----
-
-## Agenda (continued)
+::: {.column width="50%"}
 
 ### Day 2: Monday, June 8
+
 - **09:00–12:30** – Practical Workshop Session 2
   - Spatio-temporal data
   - Routing and route networks
   - Advanced topics
 - **12:30–13:30** – Lunch & Workshop Wrap-up
+
+:::
+
+::::
+
+---
 
 ## Key Links
 
