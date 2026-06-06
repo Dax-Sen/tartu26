@@ -7,14 +7,18 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages \
     pyarrow \
     jupyter-cache \
     ipykernel \
-    plotly || \
+    plotly \
+    osm2gmns \
+    grid2demand || \
     python3 -m pip install --no-cache-dir \
     duckdb \
     pandas \
     pyarrow \
     jupyter-cache \
     ipykernel \
-    plotly
+    plotly \
+    osm2gmns \
+    grid2demand
 
 # Install custom mapgl package with flows support
 RUN Rscript -e "install.packages('mapgl', repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org'))"
