@@ -1,7 +1,8 @@
 ---
 title: "Origin-destination data generation and routing with Python"
 execute:
-  eval: true
+  eval: fa
+  cache: false
 ---
 
 ```{r}
@@ -53,7 +54,8 @@ import contextily as ctx
 
 ## Choose a City
 
-Select a city to analyze. We use **Pamplona, Navarre, Spain** by default so we can validate the results against our actual Spanish OD daily dataset.
+Select a city to analyze.
+We use **Pamplona, Navarre, Spain** by default so we can validate the results against our actual Spanish OD daily dataset.
 
 ```{python}
 #| label: select-city
@@ -256,6 +258,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+![](images/paste-9.png)
+
 ## Assign Traffic Flows to the Network
 
 ### Project network and map zones to nodes
@@ -297,7 +301,8 @@ demand_df["d_node"] = demand_df["d_node"].astype(int)
 
 ### Scale OD matrix to Pamplona population
 
-Pamplona has a population of approximately 200,000. We assume 2.1 trips per resident per day.
+Pamplona has a population of approximately 200,000.
+We assume 2.1 trips per resident per day.
 
 ```{python}
 #| label: scale-od
@@ -375,9 +380,16 @@ plt.tight_layout()
 plt.show()
 ```
 
+![](images/paste-10.png)
+
 ## Validation against Real Daily Flows
 
-Now, we perform the validation. We load the real daily flows and zone centroids extracted for Pamplona, map the centroids to our 12x12 grid2demand zones using a spatial join, aggregate the flows, and compute the correlation.
+Now, we perform the validation.
+We load the real daily flows and zone centroids extracted for Pamplona, map the centroids to our 12x12 grid2demand zones using a spatial join, aggregate the flows, and compute the correlation.
+
+**Exercise: what is the correlation between observed flows and the modelled flows using the approach outlined above?**
+
+**How could it be improved?**
 
 ```{python}
 #| label: validation
