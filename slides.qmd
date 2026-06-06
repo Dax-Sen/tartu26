@@ -28,7 +28,7 @@ format:
 - **14:00–18:00** – Practical Workshop Session 1 (with coffee break)
   - Finding and importing data
   - Origin-destination analysis
-  - Visualisation
+  - Group work
 :::
 
 ::: {.column width="50%"}
@@ -36,7 +36,6 @@ format:
 ### Day 2: Monday, June 8
 
 - **09:00–12:30** – Practical Workshop Session 2
-  - Spatio-temporal data
   - Routing and route networks
   - Advanced topics
 - **12:30–13:30** – Lunch & Workshop Wrap-up
@@ -44,6 +43,39 @@ format:
 :::
 
 ::::
+
+---
+
+## What research questions and policy needs can be addressed with origin-destination and route network datasets?
+
+- Unanswered questions in transport research
+- Policy needs in transport planning and management
+- Specific policies and roles, e.g. transport planning officer in local government
+
+---
+
+## Research question ideas
+
+- What factors contribute to greater and lesser mobility connections between places (including and in addition to national borders and The Pyrenees, outlined in the workbook)?
+- To what extent does the transport network reflect flows between places? (And is there any evidence that the transport network is more a cause or a consequence of flows?)
+- How do transport flows and networks change over time, and what are the implications for transport planning
+- Are there any case studies of changes in flows that can be attributed to policy interventions in the temporal OD data from Spain?
+
+---
+
+## More ideas
+
+- How can estimates of OD flows, e.g. those using the approaches in the Python workbook, be improved?
+- How can we better visualise OD flows and route networks?
+- To what extent can the methods presented for Spain be applied to other contexts (you could find other OD or route network datasets, or use the methods to estimate OD flows in other contexts)?
+
+---
+
+## Group work
+
+You will present your work in groups, there are no rules on who does what, but everyone should input.
+
+See placeholder presentations in the workshop website.
 
 ---
 

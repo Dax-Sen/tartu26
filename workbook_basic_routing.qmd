@@ -1,5 +1,7 @@
 ---
 title: "Getting Started with Routing"
+execute:
+  eval: true
 ---
 
 ## Introduction
@@ -38,9 +40,12 @@ pkgs <- c(
     "crsuggest" # Suggest appropriate coordinate reference systems
 )
 
-# Install the packages
-pak::pkg_install(pkgs)
+pkgs_installed = all(pkgs %in% installed.packages())
 
+# Install the packages
+if (!pkgs_installed) {
+    pak::pkg_install(pkgs)
+}
 # Load all packages
 sapply(pkgs, require, character.only = TRUE)
 ```
@@ -69,6 +74,7 @@ if (!file.exists("flows_north_time.rds")) {
 flows_north_time <- readRDS("flows_north_time.rds")
 locations_north <- readRDS("locations_north.rds")
 ```
+
 ## Extract and prepare the network
 
 ### Sample zones from high-flow origins
@@ -104,12 +110,14 @@ sample_zones <- all_zones |>
 
 ### Download and process the road network
 
-Next, we download the driving network for Spain from OSM, filter to relevant road types, and fill in missing speed limit data.
+Next, we downloaded the driving network for Spain from OSM, filter to relevant road types, and fill in missing speed limit data.
+Note: the following code chunk downloads a large amount of data and takes several minutes to run, so we recommend skipping to @sec-load-network, which downloads a subset of Spain's national network data that we have prepared for the course.
 
 ```{r}
 #| label: process-network
 #| eval: false
 #| code-summary: "Download OSM network and prepare for routing"
+#| code-fold: true
 # Create a buffer around all zones to define the study area
 zones_buffer <- all_zones |>
     st_union() |>
@@ -117,6 +125,7 @@ zones_buffer <- all_zones |>
     st_convex_hull() # Create convex hull
 
 # Download driving network for Spain from OSM
+# Warning: this can take some time!
 net <- oe_get_network(
     "Spain",
     mode = "driving",
@@ -180,7 +189,7 @@ write_rds(net[zones_mask, ], "clean_net_study_area.rds")
 # system("gh release upload v1 clean_net.rds clean_net_study_area.rds --clobber")
 ```
 
-### Load the pre-processed network
+### Load the pre-processed network {#sec-load-network}
 
 For efficiency, we load the pre-processed network from the study area.
 

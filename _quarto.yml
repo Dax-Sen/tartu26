@@ -27,6 +27,8 @@ website:
         text: Workbook
       - href: workbook_basic_routing.qmd
         text: Routing Workbook
+      - href: od-data-python.qmd
+        text: Python Demand Matrix
       - href: slides.qmd
         text: Slides
       - section: "Group Presentations"

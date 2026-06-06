@@ -1,12 +1,26 @@
 ---
-title: "Spatio-temporal data with OD data"
+title: "Analysing spatio-temporal origin-destination data"
 number-sections: true
+execute:
+  eval: true
 ---
 
 ## Install the required packages
 
+See the [prerequisites page](prerequisites.qmd) on ways to install and setup an environment with the R packages needed to run the code in this workbook.
+
+
+::: note
+You are welcome to implement the work presented here in another language if you have the motivation and skills to do so.
+See the [python-based](od-data-python.qmd) workbook for an example of origin-destination data generation and processing in Python, for example.
+:::
+
 ```{r}
 #| eval: false
+pak::pak("tdscience/tartu26")
+```
+
+```{r}
 library(spanishoddata)
 library(flowmapblue)
 library(mapgl)
@@ -22,11 +36,17 @@ The example builds on the code in the [Prerequisites](prerequisites.qmd) section
 
 ### Northern Spain case study: Pamplona to Donostia corridor
 
-As an alternative to Seville, you can explore mobility patterns in Northern Spain, covering the Basque Country and Navarre regions.
-This area includes the cities of Pamplona (Iruña) and Donostia (San Sebastián), stretches from the French border to the Bay of Biscay coast, and forms a roughly rectangular study area whose east--west extent is longer than its north--south extent.
+In this workbook you will explore mobility patterns in Northern Spain, covering the Basque Country and Navarre regions.
+This area includes the cities of Pamplona (Iruña) and Donostia (San Sebastián).
+It forms a roughly rectangular study area from the border between Spain and France in the East to the edge of the Bilbao to the West.
 
-Rather than filtering by a text pattern (as with Seville), we define the study area geographically with a bounding box and select all districts that intersect it.
+Rather than filtering by a text pattern (as we did in the demo for Seville), we define the study area geographically with a bounding box and select all districts that intersect it.
+This approach allows you to run the code below for other regions; if you do choose a different case study area you could choose an alternative to the border between Spain and France as the basis for analysing flows between a linear feature, e.g. a major road, railway or river reducing connectivity between settlements. 
+
+<details>
 The province codes in the zone `id` field can also be used: Navarre = `31`, Gipuzkoa = `20`, Bizkaia = `48`, and Álava = `01`.
+The OD data we will be using from the Spanish Ministry of Transport was released in different versions, with the 2nd being more up-to-date, explaining the argument `ver = 2` in the code chunks below.
+</details>
 
 ```{r}
 #| label: flowmap-northern-spain
@@ -36,7 +56,7 @@ The province codes in the zone `id` field can also be used: Navarre = `31`, Gipu
 spod_set_data_dir('data')
 # Get zones
 zones <- spod_get_zones(zones = "distr", ver = 2)
-valid_dates <- spod_get_valid_dates(2)
+valid_dates <- spod_get_valid_dates(ver = 2)
 recent_dates = tail(valid_dates, 3)
 
 # Define a geographic bounding box for the Northern Spain study area
@@ -51,9 +71,9 @@ zones_wgs84 <- st_transform(zones, 4326)
 zones_north <- zones_wgs84 |>
   st_filter(bbox_sf, .predicate = st_intersects)
 
-# Visualise the selected zones
-plot(st_geometry(zones_north))
-mapview::mapview(zones_north) + mapview::mapview(st_geometry(bbox_sf), color = "red", alpha.regions = 0, lwd = 2)
+# Visualise the selected zones:
+# plot(st_geometry(zones_north)) # basic plot
+qtm(zones_north) + qtm(bbox_sf)
 
 # Prepare location data (centroids) for the flow map
 locations_north <- zones_north |>
@@ -62,16 +82,14 @@ locations_north <- zones_north |>
   as.data.frame() |>
   mutate(id = zones_north$id) |>
   rename(lon = X, lat = Y)
-
 ```
 
-To get the data for the flow map, we download the OD flows for the recent dates and filter to the zones in our study area.
-We then aggregate the flows by hour to create a spatio-temporal dataset suitable for animation, using the following code block.
-For workshop use, we have precomputed this dataset and saved it as an RDS file, so you can skip the download step if you prefer.
+The following code chunk download the OD data for the recent dates and filters, to the zones in our study area, and aggregates by hour to create a spatio-temporal dataset suitable for animation.
+For workshop use, we have precomputed this dataset and saved it as an RDS file, so you can skip the this chunk.
 
 <details>
 
-<summary>Data download and preparation code (uncomment to run)</summary>
+<summary>Data download and preparation code (unfold this code chunk if you want to download and process datasets for another case study with different spatial and temporal bounds)</summary>
 
 ```{r}
 #| eval: false
@@ -112,9 +130,23 @@ system("gh release upload v1 flows_north_time.parquet locations_north.parquet fl
 
 </details>
 
+Downloaded the datasets we have prepared by navigating to [github.com/tdscience/tartu26/releases](https://github.com/tdscience/tartu26/releases) in your browser, or use the code below to download the code programatically.
+
+<details>
+<summary>With the gh command line interface (CLI)</summary>
+If you have the `gh` CLI installed (you probably don't if you don't know what this is), run this command from your system shell, e.g. PowerShell or a terminal:
+
+```sh
+gh release download v1 --repo tdscience/tartu26
+```
+</details>
+
+<details>
+<summary>With R</summary>
+
 ```{r}
 if (!file.exists("flows_north_time.rds")) {
-  message("Precomputed Northern Spain data not found. Download the raw data with the code block above or download from the GitHub release assets.")
+  message("Precomputed Northern Spain data not found.")
   # Download from GitHub release assets:
   # system("gh release download v1 --pattern 'flows_north_time.rds'")
   release_url <- "https://github.com/tdscience/tartu26/releases/download/v1/"
@@ -123,6 +155,8 @@ if (!file.exists("flows_north_time.rds")) {
   }
 }
 ```
+
+</details>
 
 ## Generate the interactive flow map
 
