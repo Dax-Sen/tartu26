@@ -1,30 +1,42 @@
 ---
 title: "Origin-destination data generation and routing with Python"
 execute:
-  eval: fa
+  eval: false
   cache: false
+jupyter: python3
 ---
 
-```{r}
+```{python}
 #| label: export-pamplona-csv
 #| include: false
-library(sf)
-library(tidyverse)
-Sys.setenv(RETICULATE_PYTHON = "/usr/bin/python3")
-reticulate::use_python("/usr/bin/python3", required = TRUE)
-if (!file.exists("pamplona_zones.csv") || !file.exists("pamplona_real_flows.csv")) {
-  locs <- readRDS('locations_north.rds')
-  flows <- readRDS('flows_north_time.rds')
-  locs_sf <- st_as_sf(locs, coords = c('lon', 'lat'), crs = 4326, remove = FALSE)
-  centre <- st_sfc(st_point(c(-1.6432, 42.8166)), crs = 4326)
-  locs_sf$dist <- as.numeric(st_distance(locs_sf, centre))
-  p_zones <- locs_sf |> filter(dist <= 10000)
-  write.csv(st_drop_geometry(p_zones), 'pamplona_zones.csv', row.names = FALSE)
-  p_flows <- flows |>
-    filter(origin %in% p_zones$id, dest %in% p_zones$id) |>
-    summarise(daily_volume = sum(count) / 3, .by = c(origin, dest))
-  write.csv(p_flows, 'pamplona_real_flows.csv', row.names = FALSE)
-}
+import os
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+if not os.path.exists("pamplona_zones.csv") or not os.path.exists("pamplona_real_flows.csv"):
+    locs = pd.read_parquet('locations_north.parquet')
+    flows = pd.read_parquet('flows_north_time.parquet')
+    
+    locs_gdf = gpd.GeoDataFrame(
+        locs, 
+        geometry=gpd.points_from_xy(locs['lon'], locs['lat']), 
+        crs="EPSG:4326"
+    )
+    # Using local UTM zone 30N (EPSG:32630) for Pamplona to calculate distance in meters
+    locs_proj = locs_gdf.to_crs(epsg=32630)
+    centre_proj = gpd.GeoSeries([Point(-1.6432, 42.8166)], crs="EPSG:4326").to_crs(epsg=32630).iloc[0]
+    locs_gdf['dist'] = locs_proj.distance(centre_proj)
+    
+    p_zones = locs_gdf[locs_gdf['dist'] <= 10000].copy()
+    p_zones_df = pd.DataFrame(p_zones.drop(columns='geometry'))
+    p_zones_df.to_csv('pamplona_zones.csv', index=False)
+    
+    p_flows = flows[flows['origin'].isin(p_zones['id']) & flows['dest'].isin(p_zones['id'])].copy()
+    p_flows = p_flows.groupby(['origin', 'dest'])['count'].sum().reset_index()
+    p_flows.rename(columns={'count': 'daily_volume'}, inplace=True)
+    p_flows['daily_volume'] = p_flows['daily_volume'] / 3
+    p_flows.to_csv('pamplona_real_flows.csv', index=False)
 ```
 
 ## Setup
