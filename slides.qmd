@@ -58,7 +58,6 @@ format:
 
 - What factors contribute to greater and lesser mobility connections between places (including and in addition to national borders and The Pyrenees, outlined in the workbook)?
 - To what extent does the transport network reflect flows between places? (And is there any evidence that the transport network is more a cause or a consequence of flows?)
-- How do transport flows and networks change over time, and what are the implications for transport planning
 - Are there any case studies of changes in flows that can be attributed to policy interventions in the temporal OD data from Spain?
 
 ---
