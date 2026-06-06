@@ -1,0 +1,38 @@
+name: Generate Group Slides
+
+on:
+  push:
+    paths:
+      - 'slides-template.qmd'
+      - 'scripts/generate_group_slides.R'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tdscience/tartu26:latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Run slide generation script
+        run: Rscript scripts/generate_group_slides.R
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add group1.qmd group2.qmd group3.qmd group4.qmd
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto-generate group slides from template"
+            git push
+          else
+            echo "No changes to commit"
+          fi

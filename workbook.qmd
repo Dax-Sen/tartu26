@@ -1,6 +1,8 @@
 ---
 title: "Spatio-temporal data with OD data"
 number-sections: true
+execute:
+  eval: true
 ---
 
 ## Install the required packages
