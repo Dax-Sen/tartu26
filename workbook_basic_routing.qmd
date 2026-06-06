@@ -1,7 +1,7 @@
 ---
 title: "Getting Started with Routing"
 execute:
-  eval: true
+  eval: false
 ---
 
 ## Introduction
@@ -12,12 +12,12 @@ In this workbook, you will learn the fundamentals of network routing using open 
 
 By working through this notebook, you will:
 
-- Extract road network data from OSM using the `osmextract` package
-- Build a spatial network graph from raw road geometries with the `sfnetworks` package
-- Calculate network metrics such as centrality to understand the structure of the road network
-- Assign OD flows to shortest paths using a simple all-or-nothing traffic assignment model
-- Visualise traffic flows on individual road segments
-- Measure route directness and network efficiency
+-   Extract road network data from OSM using the `osmextract` package
+-   Build a spatial network graph from raw road geometries with the `sfnetworks` package
+-   Calculate network metrics such as centrality to understand the structure of the road network
+-   Assign OD flows to shortest paths using a simple all-or-nothing traffic assignment model
+-   Visualise traffic flows on individual road segments
+-   Measure route directness and network efficiency
 
 ## Setup
 
@@ -54,7 +54,8 @@ sapply(pkgs, require, character.only = TRUE)
 
 ### Load origin-destination flows and zone locations
 
-We use the Northern Spain study area data from the main workbook. The dataset contains hourly flows between districts and the coordinates of zone centroids.
+We use the Northern Spain study area data from the main workbook.
+The dataset contains hourly flows between districts and the coordinates of zone centroids.
 
 ```{r}
 #| label: load-od-data
@@ -79,7 +80,8 @@ locations_north <- readRDS("locations_north.rds")
 
 ### Sample zones from high-flow origins
 
-We identify zones involved in the highest traffic flows and select a subset for detailed routing analysis. This helps us focus on the most active corridors in the study area.
+We identify zones involved in the highest traffic flows and select a subset for detailed routing analysis.
+This helps us focus on the most active corridors in the study area.
 
 ```{r}
 #| label: sample-zones
@@ -113,7 +115,7 @@ sample_zones <- all_zones |>
 Next, we downloaded the driving network for Spain from OSM, filter to relevant road types, and fill in missing speed limit data.
 Note: the following code chunk downloads a large amount of data and takes several minutes to run, so we recommend skipping to @sec-load-network, which downloads a subset of Spain's national network data that we have prepared for the course.
 
-```{r}
+```{n{r}
 #| label: process-network
 #| eval: false
 #| code-summary: "Download OSM network and prepare for routing"
@@ -153,7 +155,7 @@ net <- net |> st_cast("LINESTRING")
 # Remove unnecessary columns to reduce data size
 net$other_tags <- NULL
 
-# Calculate the most common speed limit for each road type
+# Nthe most common speed limit for each road type
 # by finding the limit that covers the greatest distance
 speed_limits <- net |>
     mutate(dist = as.numeric(st_length(geometry))) |>
@@ -217,13 +219,14 @@ net <- readRDS("clean_net_study_area.rds")
 
 ### Convert the road network to a spatial graph
 
-We convert the spatial line features into a graph structure that enables efficient routing. This involves:
+We convert the spatial line features into a graph structure that enables efficient routing.
+This involves:
 
-1. Finding the optimal coordinate reference system for accurate distance calculations
-2. Creating an `sfnetwork` object with nodes (intersections) and edges (road segments)
-3. Subdividing edges at intersection points to create true network nodes
-4. Calculating travel times based on road geometry and speed limits
-5. Simplifying the network by removing unnecessary intermediate nodes
+1.  Finding the optimal coordinate reference system for accurate distance calculations
+2.  Creating an `sfnetwork` object with nodes (intersections) and edges (road segments)
+3.  Subdividing edges at intersection points to create true network nodes
+4.  Calculating travel times based on road geometry and speed limits
+5.  Simplifying the network by removing unnecessary intermediate nodes
 
 ```{r}
 #| label: create-sfnetwork
@@ -300,9 +303,12 @@ tm_shape(sf_net_simpl) +
     tm_dots(col = "red", size = 0.5)
 ```
 
+![](images/paste-11.png)
+
 ### Calculate network diameter
 
-The diameter tells us the longest shortest-path distance in the network. We calculate it in both travel time and distance.
+The diameter tells us the longest shortest-path distance in the network.
+We calculate it in both travel time and distance.
 
 ```{r}
 #| label: network-diameter
@@ -327,7 +333,8 @@ cat("Network diameter (distance):", diam_dist, "km\n")
 
 ### Calculate edge betweenness centrality
 
-Betweenness centrality measures how often a road segment appears on shortest paths between all pairs of nodes. Roads with high centrality are usually key components in the network.
+Betweenness centrality measures how often a road segment appears on shortest paths between all pairs of nodes.
+Roads with high centrality are usually key components in the network.
 
 ```{r}
 #| label: network-centrality
@@ -351,6 +358,8 @@ ggplot() +
     theme_void() +
     labs(title = "Road Network Centrality")
 ```
+
+![](images/paste-12.png)
 
 ## Routing and traffic assignment
 
@@ -389,7 +398,7 @@ sample_od <- expand_grid(
 
 ### Find the peak flow hour
 
-We identify the hour with the highest total flows to use for our routing analysis. 
+We identify the hour with the highest total flows to use for our routing analysis.
 
 ```{r}
 #| label: find-peak-hour
@@ -470,6 +479,8 @@ sf_net_simpl %>%
     plot(col = colours, pch = 8, cex = 2, lwd = 2, add = TRUE)
 ```
 
+![](images/paste-13.png)
+
 ### Extract route characteristics
 
 For each path, we extract the total distance and travel time.
@@ -498,7 +509,8 @@ sample_od$travel_time <- vapply(
 
 ### Measure route directness
 
-Directness compares the actual route distance to the straight-line distance. A value of 1.0 means the route is perfectly direct; higher values indicate more circuitous routing.
+Directness compares the actual route distance to the straight-line distance.
+A value of 1.0 means the route is perfectly direct; higher values indicate more circuitous routing.
 
 ```{r}
 #| label: measure-directness
@@ -527,7 +539,8 @@ print(sample_od_summary)
 
 ### Apply all-or-nothing traffic assignment
 
-We assign all OD flows to their shortest paths. This creates an estimate of traffic volume on each road segment.
+We assign all OD flows to their shortest paths.
+This creates an estimate of traffic volume on each road segment.
 
 ```{r}
 #| label: assign-flows
@@ -585,5 +598,4 @@ sf_edges |>
     ) 
 ```
 
-
-
+![](images/paste-14.png)
