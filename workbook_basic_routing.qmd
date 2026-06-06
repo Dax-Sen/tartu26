@@ -115,7 +115,7 @@ sample_zones <- all_zones |>
 Next, we downloaded the driving network for Spain from OSM, filter to relevant road types, and fill in missing speed limit data.
 Note: the following code chunk downloads a large amount of data and takes several minutes to run, so we recommend skipping to @sec-load-network, which downloads a subset of Spain's national network data that we have prepared for the course.
 
-```{n{r}
+```{r}
 #| label: process-network
 #| eval: false
 #| code-summary: "Download OSM network and prepare for routing"
@@ -155,7 +155,7 @@ net <- net |> st_cast("LINESTRING")
 # Remove unnecessary columns to reduce data size
 net$other_tags <- NULL
 
-# Nthe most common speed limit for each road type
+# Calculate the most common speed limit for each road type
 # by finding the limit that covers the greatest distance
 speed_limits <- net |>
     mutate(dist = as.numeric(st_length(geometry))) |>

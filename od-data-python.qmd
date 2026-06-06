@@ -125,7 +125,7 @@ print("Downloading points of interest...")
 poi_gdf = ox.features_from_point(
     (latitude, longitude),
     tags={"amenity": True, "shop": True, "leisure": True,
-          "tourism": True, "building": True, "office": True, "landuse": True},
+          "tourism": True, "office": True},
     dist=RADIUS_M
 )
 poi_gdf = poi_gdf.reset_index(drop=True)
@@ -142,6 +142,9 @@ We convert the road network to GMNS format and set up the grid zones.
 osm_file = "study_area.osm"
 print("Exporting network to OSM file...")
 ox.save_graph_xml(G, filepath=osm_file)
+
+print("Simplifying graph for routing...")
+G = ox.simplify_graph(G)
 
 print("Converting to GMNS format...")
 network = og.getNetFromFile(osm_file, POI=False)
