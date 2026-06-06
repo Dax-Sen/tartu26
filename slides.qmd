@@ -1,6 +1,7 @@
 ---
 title: "Transport Data Science"
 subtitle: "From origin-destination to route network datasets"
+author: "Robin Lovelace and Juan Fonseca"
 format:
   revealjs:
     theme: moon
