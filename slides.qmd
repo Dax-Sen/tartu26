@@ -58,15 +58,24 @@ format:
 
 - What factors contribute to greater and lesser mobility connections between places (including and in addition to national borders and The Pyrenees, outlined in the workbook)?
 - To what extent does the transport network reflect flows between places? (And is there any evidence that the transport network is more a cause or a consequence of flows?)
-- Are there any case studies of changes in flows that can be attributed to policy interventions in the temporal OD data from Spain?
+- Can transport system features such as high-speed rail in Spain be detected in the OD data?
 
 ---
 
-## More ideas
+## Specific questions related to the workbooks
+
+- What are the main predictors of zonal flows?
+- How does the deterrence effect of the Spain-France border vary between weekdays and weekends?
+- To what extent does road segment betweenness centrality predict the assigned traffic volumes from the routing model?
+
+---
+
+## Technical/methodological ideas
 
 - How can estimates of OD flows, e.g. those using the approaches in the Python workbook, be improved?
 - How can we better visualise OD flows and route networks?
 - To what extent can the methods presented for Spain be applied to other contexts (you could find other OD or route network datasets, or use the methods to estimate OD flows in other contexts)?
+- What other packages can be used to work with OD and route network datasets, and how do they compare to those used in the workbook?
 
 ---
 
