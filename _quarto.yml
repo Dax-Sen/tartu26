@@ -29,6 +29,8 @@ website:
         text: Routing Workbook
       - href: od-data-python.qmd
         text: Python Demand Matrix
+      - href: walking-networks.qmd
+        text: Walking Networks
       - href: slides.qmd
         text: Slides
       - section: "Group Presentations"
