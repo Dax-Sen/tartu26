@@ -14,7 +14,7 @@ format:
 ## Delivery Team
 
 -   **Robin Lovelace**\
-    *Associate Professor of Transport Data Science, University of Leeds*
+    *Professor of Transport Data Science, University of Leeds*
 -   **Juan Fonseca**\
     *PhD Candidate, University of Leeds*
 
