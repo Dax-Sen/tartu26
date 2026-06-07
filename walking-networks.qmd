@@ -146,6 +146,47 @@ nodes_gdf = networks.node_centrality_shortest(
 print("Centrality calculations completed.")
 ```
 
+### Segment-Based Centrality (Continuous Along Edges)
+
+While the node-level centralities above indicate intersection importance, walking volumes are distributed *continuously along street segments*. The `cityseer` `segment_centrality` function computes a continuous form of betweenness centrality along the full length of each edge, better representing pedestrian flow potential along entire streets rather than at isolated nodes. This produces a `seg_betweenness` value at each node (weighted by adjacent segment lengths) that we can interpolate onto the edge geometries.
+
+```{python}
+#| label: compute-segment-centrality
+print("Computing segment-level betweenness centrality...")
+nodes_gdf = networks.segment_centrality(
+    network_structure,
+    nodes_gdf,
+    distances=[1200],
+    compute_closeness=False,
+    compute_betweenness=True
+)
+print("Segment centrality calculations completed.")
+
+# Map segment betweenness from nodes to edges by averaging endpoint values
+edge_to_node_start = dict(zip(edges_gdf.index, edges_gdf["nx_start_node_key"]))
+edge_to_node_end = dict(zip(edges_gdf.index, edges_gdf["nx_end_node_key"]))
+
+# Get segment betweenness for each node (nodes_gdf index = original node key)
+seg_betweenness = nodes_gdf["cc_seg_betweenness_1200"].to_dict()
+
+# Average endpoint values for each edge
+edge_volumes = []
+for edge_idx in edges_gdf.index:
+    n_start = edge_to_node_start[edge_idx]
+    n_end = edge_to_node_end[edge_idx]
+    v_start = seg_betweenness.get(n_start, 0)
+    v_end = seg_betweenness.get(n_end, 0)
+    edge_volumes.append((v_start + v_end) / 2)
+
+edges_gdf["walking_volume"] = edge_volumes
+
+# Sort and rank for top-500 identification
+edges_gdf["volume_rank"] = edges_gdf["walking_volume"].rank(ascending=False)
+edges_gdf["is_top500"] = edges_gdf["volume_rank"] <= 500
+print(f"  Walking volume mapped to {len(edges_gdf):,} edges.")
+print(f"  Top 500 segments account for {edges_gdf[edges_gdf['is_top500']]['walking_volume'].sum() / edges_gdf['walking_volume'].sum() * 100:.1f}% of total walking volume.")
+```
+
 ### Closeness Centrality (800m)
 
 Closeness centrality at 800m indicates the accessibility of a neighborhood center. Areas with high closeness are highly integrated into the street fabric, allowing pedestrians to easily reach many surrounding streets within a 10-minute walk.
@@ -215,6 +256,87 @@ print("Saved betweenness centrality plot.")
 The betweenness map identifies key arterial footpaths, bridges across the Arga river, and pedestrianized thoroughfares:
 
 ![](images/betweenness-centrality.png)
+
+### Walking Volume Map — Estimated Pedestrian Flows
+
+We now combine the segment-based betweenness centrality into a single map that shows estimated walking volumes across the Pamplona pedestrian network. Each edge is coloured by its `seg_betweenness_1200` value, which represents the expected pedestrian flow potential along that street segment. The top 500 segments by estimated volume are overlaid with thicker, brighter lines to highlight the main pedestrian corridors.
+
+```{python}
+#| label: plot-walking-volume-map
+#| results: hide
+fig, ax = plt.subplots(figsize=(12, 12))
+
+# All edges in light grey as background
+edges_low = edges_gdf[~edges_gdf["is_top500"]]
+edges_high = edges_gdf[edges_gdf["is_top500"]]
+
+# Plot basemap layers first
+# We can't use add_basemap easily with two edge layers, so we plot basemap first
+ax.set_title("Estimated Pedestrian Walking Volumes — Pamplona", fontsize=14, fontweight="bold")
+
+# Plot low-volume edges in grey
+edges_low.plot(ax=ax, color="#d0d0d0", linewidth=0.4, alpha=0.5, zorder=1)
+
+# Plot all edges coloured by walking volume with a clear colour ramp
+# For the colour, use the walking_volume value normalised on a log scale
+volumes = edges_gdf["walking_volume"].values
+volumes_log = np.log1p(volumes)
+vmin_log, vmax_log = volumes_log.min(), volumes_log.max()
+norm_log = plt.Normalize(vmin=vmin_log, vmax=vmax_log)
+cmap = plt.cm.plasma
+
+# Plot each edge coloured by its log walking volume
+for idx, row in edges_gdf.iterrows():
+    if row["walking_volume"] <= 0:
+        continue
+    color = cmap(norm_log(np.log1p(row["walking_volume"])))
+    lw = 1.0
+    ax.plot(
+        *row["geom"].xy,
+        color=color,
+        linewidth=lw,
+        alpha=0.6,
+        zorder=2
+    )
+
+# Overlay top 500 segments with thicker, more prominent styling
+for idx, row in edges_high.iterrows():
+    if row["walking_volume"] <= 0:
+        continue
+    color = cmap(norm_log(np.log1p(row["walking_volume"])))
+    lw = 2.5 + 3.0 * (norm_log(np.log1p(row["walking_volume"])))
+    ax.plot(
+        *row["geom"].xy,
+        color=color,
+        linewidth=lw,
+        alpha=0.9,
+        zorder=3
+    )
+
+# Add basemap
+ctx.add_basemap(ax, crs=nodes_gdf.crs.to_string(), source=ctx.providers.CartoDB.Positron, alpha=0.7)
+
+# Add colorbar
+sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm_log)
+sm.set_array([])
+cbar = fig.colorbar(sm, ax=ax, shrink=0.6, pad=0.02)
+cbar.set_label("Estimated walking volume (seg_betweenness, log scale)", fontsize=11)
+
+# Legend annotations
+ax.plot([], [], color="#d0d0d0", linewidth=0.4, alpha=0.5, label="Low-volume segments")
+ax.plot([], [], color=cmap(0.8), linewidth=4.0, alpha=0.9, label="Top 500 corridors")
+ax.legend(loc="upper right", fontsize=10, framealpha=0.8)
+
+ax.set_axis_off()
+plt.tight_layout()
+fig.savefig("images/walking-volume-map.png", dpi=150)
+plt.close(fig)
+print("Saved walking volume map.")
+```
+
+The resulting map reveals the hierarchy of pedestrian corridors in Pamplona. The brightest, thickest lines represent streets with the highest estimated walking volumes — typically the historic core, bridges across the Arga river, and key commercial streets. These are the corridors where investment in pedestrian infrastructure (wide sidewalks, crossings, wayfinding, street lighting) will have the greatest impact.
+
+![](images/walking-volume-map.png)
 
 ## Landuse Accessibility and Mixing
 

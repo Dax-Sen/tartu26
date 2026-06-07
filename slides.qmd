@@ -86,6 +86,7 @@ Credit: Juan Fonseca.
 -   How can we better visualise OD flows and route networks? Try the package {od} in R for example.
 -   To what extent can the methods presented for Spain be applied to other contexts (you could find other OD or route network datasets, or use the methods to estimate OD flows in other contexts)?
 -   What other packages can be used to work with OD and route network datasets, and how do they compare to those used in the workbook?
+-   For UK analysis, the {debiasRdata} package provides observed and census MSOA OD data: [github.com/de-bias/debiasRdata](https://github.com/de-bias/debiasRdata). See the [MSOA OD data](https://github.com/de-bias/debiasRdata/blob/main/inst/extdata/msoa_OD_travel2work.csv.gz).
 
 ------------------------------------------------------------------------
 
