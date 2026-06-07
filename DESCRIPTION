@@ -22,5 +22,6 @@ Imports:
     tidygraph,
     tidyverse,
     tmap,
-    tmap.networks
+    tmap.networks,
+    quarto
 RoxygenNote: 7.3.1
