@@ -1,7 +1,7 @@
 ---
 title: "Transport Data Science"
 subtitle: "From origin-destination to route network datasets"
-author: "Robin Lovelace and Juan Fonseca"
+author: "By Robin Lovelace and Juan Fonseca\n\nFrom the Institute for Transport Studies (ITS), University of Leeds\n\nFor Mobile Tartu 2026\n\nSlides: tdscience.github.io/tartu26\n\ncode:github.com/tdscience/tartu26"
 format:
   revealjs:
     theme: moon
@@ -13,18 +13,17 @@ format:
 
 ## Delivery Team
 
-::::: columns
-::: {.column width="50%"}
+:::: columns
+::: {.column}
 - **Robin Lovelace**\
   *Professor of Transport Data Science, University of Leeds*
 - **Juan Fonseca**\
   *PhD Candidate, University of Leeds*
 :::
-
 ::: {.column width="50%"}
 ![](images/clipboard-1636710599.png)
 :::
-:::::
+::::
 
 ## Agenda
 
