@@ -1,5 +1,5 @@
 ---
-title: "Group 1 presentation: this is a test"
+title: "Group 1 presentation: WE ARE THE BEST"
 format:
   revealjs:
     theme: league
