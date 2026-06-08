@@ -106,28 +106,59 @@ See placeholder presentations in the workshop website.
 
 ------------------------------------------------------------------------
 
+## Agenda, day 2 and 3
+
+June 8, Monday (PhD School & Main Conference)
+
+- 8:30–9:00 – Morning coffee
+- 9:00–12:30 – Workshops
+- 12:30–13:30 – Lunch for PhD School
+- (13:30 onwards – Main Conference programme begins)
+ 
+
+June 9, Tuesday (PhD School & Main Conference)
+
+- 15:20–17:00 – Session 4: PhD School workshop presentations & Paper 4A
+- 17:00–17:20 – PhD School diplomas
+
 ## Technology stack
 
-```
-+-----------------------------------------------------------------+
-|                     QUARTO WEBSITE / Reveal.js                  |
-+--------------------------------+--------------------------------+
-|            R STACK             |          PYTHON STACK          |
-|  * Lang: R (>=4.3)             |  * Lang: Python (>=3.10)       |
-|  * Packages (via pak):         |  * Package Manager: Pixi       |
-|    - sf & sfnetworks           |  - geopandas & osmnx           |
-|    - dodgr & osmextract        |  - osm2gmns & grid2demand      |
-|    - tmap & mapgl              |  - networkx, pandas, numpy     |
-+--------------------------------+--------------------------------+
-|                         DATABASE LAYER                          |
-|              [ DuckDB Engine | Parquet & CSV Data ]             |
-+-----------------------------------------------------------------+
-|                      CONTAINER / RUNTIME                        |
-|       [ Docker: ghcr.io/tdscience/tartu26 ] <-> [ Codespaces ]  |
-+-----------------------------------------------------------------+
-|                       OPERATING SYSTEM                          |
-|                       [ Linux OS (Debian) ]                     |
-+-----------------------------------------------------------------+
+```{mermaid}
+flowchart TD
+  Q[Quarto Website / Reveal.js Slides]
+  
+  subgraph R_Env ["R Environment (>= 4.3)"]
+    R_Core[R Language]
+    R_Pkgs["sf, sfnetworks, dodgr,<br>osmextract, tmap, mapgl"]
+  end
+
+  subgraph Py_Env ["Python Environment (>= 3.10)"]
+    Py_Core[Python / Pixi]
+    Py_Pkgs["geopandas, osmnx, osm2gmns,<br>grid2demand, networkx"]
+  end
+
+  subgraph Data_Layer ["Data & Storage Layer"]
+    DuckDB[(DuckDB Engine)]
+    Files[Parquet / CSV Files]
+  end
+
+  subgraph Runtime ["Runtime & Virtualization"]
+    Docker[Docker Container]
+    Codespaces[GitHub Codespaces]
+  end
+
+  OS[Linux OS: Debian]
+
+  Q --> R_Core
+  Q --> Py_Core
+  R_Core --> R_Pkgs
+  Py_Core --> Py_Pkgs
+  R_Pkgs --> DuckDB
+  Py_Pkgs --> DuckDB
+  DuckDB --> Files
+  Files --> Docker
+  Docker --> Codespaces
+  Codespaces --> OS
 ```
 
 ## Key Links
