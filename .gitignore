@@ -12,6 +12,8 @@ site_libs/
 /.luarc.json
 *.rds
 data/
+.venv
+*.egg-info/
 *.parquet
 *.csv
 *.rds

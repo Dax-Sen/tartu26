@@ -7,14 +7,21 @@ License: CC BY-SA 4.0
 Encoding: UTF-8
 LazyData: true
 Imports:
+    crsuggest,
     dodgr,
     flowmapblue,
     fs,
     htmlwidgets,
+    igraph,
     mapgl,
     osmdata,
+    osmextract,
     sf,
+    sfnetworks,
     spanishoddata,
+    tidygraph,
     tidyverse,
-    tmap
+    tmap,
+    tmap.networks,
+    quarto
 RoxygenNote: 7.3.1
