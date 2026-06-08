@@ -23,5 +23,6 @@ Imports:
     tidyverse,
     tmap,
     tmap.networks,
-    quarto
+    quarto,
+    crssuggest
 RoxygenNote: 7.3.1
