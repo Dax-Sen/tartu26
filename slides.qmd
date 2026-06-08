@@ -108,7 +108,27 @@ See placeholder presentations in the workshop website.
 
 ## Technology stack
 
-
+```
++-----------------------------------------------------------------+
+|                     QUARTO WEBSITE / Reveal.js                  |
++--------------------------------+--------------------------------+
+|            R STACK             |          PYTHON STACK          |
+|  * Lang: R (>=4.3)             |  * Lang: Python (>=3.10)       |
+|  * Packages (via pak):         |  * Package Manager: Pixi       |
+|    - sf & sfnetworks           |  - geopandas & osmnx           |
+|    - dodgr & osmextract        |  - osm2gmns & grid2demand      |
+|    - tmap & mapgl              |  - networkx, pandas, numpy     |
++--------------------------------+--------------------------------+
+|                         DATABASE LAYER                          |
+|              [ DuckDB Engine | Parquet & CSV Data ]             |
++-----------------------------------------------------------------+
+|                      CONTAINER / RUNTIME                        |
+|       [ Docker: ghcr.io/tdscience/tartu26 ] <-> [ Codespaces ]  |
++-----------------------------------------------------------------+
+|                       OPERATING SYSTEM                          |
+|                       [ Linux OS (Debian) ]                     |
++-----------------------------------------------------------------+
+```
 
 ## Key Links
 
