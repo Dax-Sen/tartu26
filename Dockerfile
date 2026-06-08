@@ -4,7 +4,6 @@ FROM ghcr.io/itsleeds/tds:latest
 USER root
 RUN apt-get update && apt-get install -y libglpk-dev && rm -rf /var/lib/apt/lists/*
 
-
 # Install Python dependencies in the system environment for direct Quarto execution
 RUN python3 -m pip install --no-cache-dir --break-system-packages \
     duckdb \
